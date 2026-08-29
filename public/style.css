@@ -618,7 +618,7 @@ hr {
 /* =========================================================================
    RESPONSIVE DESIGN
    ========================================================================= */
-@media (max-width: 768px) {
+@media screen and (max-width: 768px) {
     .navbar {
         flex-direction: column;
         padding: 16px 20px;
@@ -666,5 +666,93 @@ hr {
     
     .signature-line {
         margin-top: 30px;
+    }
+}
+
+/* =========================================================================
+   PRINT STYLES FOR PDF GENERATION
+   ========================================================================= */
+@media print {
+    @page {
+        margin: 10mm;
+        size: A4 portrait;
+    }
+
+    body {
+        background: white !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+    
+    .navbar, .btn, .actions, center {
+        display: none !important;
+    }
+
+    .container {
+        margin: 0 !important;
+        padding: 0 !important;
+        border: none !important;
+        box-shadow: none !important;
+        max-width: 100% !important;
+    }
+
+    .certificate-wrapper {
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+    
+    .certificate-inner {
+        border: 2px double #0B2A3B !important;
+        padding: 15px !important;
+    }
+
+    /* Compact elements to fit on one page */
+    .cert-header {
+        margin-bottom: 10px !important;
+        padding-bottom: 5px !important;
+    }
+    
+    .cert-header h1 {
+        font-size: 20px !important;
+    }
+    
+    .cert-grid {
+        gap: 10px !important;
+        margin-bottom: 10px !important;
+    }
+    
+    .cert-tables {
+        gap: 10px !important;
+    }
+    
+    .cert-table-wrapper h4 {
+        margin-top: 5px !important;
+        margin-bottom: 2px !important;
+        font-size: 11px !important;
+    }
+    
+    .certificate-inner table {
+        margin-top: 2px !important;
+        margin-bottom: 5px !important;
+        font-size: 10px !important;
+    }
+    
+    .certificate-inner th, .certificate-inner td {
+        padding: 4px 6px !important;
+    }
+    
+    .cert-footer {
+        margin-top: 15px !important;
+    }
+    
+    .signature-line {
+        margin-top: 20px !important;
+    }
+    
+    /* Safely break if it overflows */
+    tr, .cert-section, .cert-table-wrapper, .cert-footer {
+        page-break-inside: avoid;
     }
 }

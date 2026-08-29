@@ -102,17 +102,5 @@ window.onload = function () {
 };
 
 function downloadPDF() {
-    const element = document.getElementById('report-content');
-
-    // Configure PDF options
-    const opt = {
-        margin: 10,
-        filename: 'NAWI_Calibration_Certificate.pdf',
-        image: { type: 'jpeg', quality: 1.0 },
-        html2canvas: { scale: 2, useCORS: true },
-        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-    };
-
-    // Generate and download the PDF
-    html2pdf().set(opt).from(element).save();
+    window.print();
 }
