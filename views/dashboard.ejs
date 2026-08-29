@@ -31,7 +31,7 @@
             <thead>
                 <tr>
                     <th>Date / Time</th>
-                    <th>Instrument Capacity</th>
+                    <th>Machine Name</th>
                     <th>Action</th>
                 </tr>
             </thead>
@@ -43,7 +43,7 @@
                                 <%= new Date(report.createdAt).toLocaleString() %>
                             </td>
                             <td>
-                                <%= report.instrument_id || (report.instrument_data && report.instrument_data.capacity) || "Unknown" %> kg
+                                <%= report.instrument_data && report.instrument_data.manufacturer ? report.instrument_data.manufacturer + ' ' + report.instrument_data.model : "Unknown" %>
                             </td>
                             <td><a href="/report?id=<%= report._id %>" class="btn"><i class="fas fa-eye"></i> View
                                     Report</a></td>
