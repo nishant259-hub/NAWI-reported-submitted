@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Start New Test - NAWI</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/style.css">
+</head>
+
+<body>
+    <nav class="navbar">
+        <a href="/" class="navbar-brand">
+            <img src="/images/logo.jpg" alt="Bytebrigade Logo">
+            Bytebrigade
+        </a>
+        <div class="navbar-links">
+            <a href="/"><i class="fas fa-home"></i> Home</a>
+            <a href="/new-test"><i class="fas fa-play"></i> New Test</a>
+            <a href="/dashboard"><i class="fas fa-folder-open"></i> Dashboard</a>
+        </div>
+    </nav>
+    <div class="container">
+        <h2>Initial Setup & Specifications</h2>
+
+        <p>Enter the instrument details and environmental conditions before starting the test.</p>
+
+        <div>
+            <form id="initial-form" action="" method="GET">
+                <div class="form-card">
+                    <h4><i class="fas fa-info-circle"></i> Instrument Information</h4>
+
+                    <div class="form-group">
+                        <label>Manufacturer (Make):</label>
+                        <input type="text" name="manufacturer" placeholder="e.g. XYZ Electronics" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Model Number:</label>
+                        <input type="text" name="model" placeholder="e.g. XYZ-100" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Accuracy Class:</label>
+                        <select name="Class_value" id="ClassValue" required>
+                            <option value="class I">Class I (Special)</option>
+                            <option value="class II">Class II (High)</option>
+                            <option value="class III" selected>Class III (Medium)</option>
+                            <option value="class IIII">Class IIII (Ordinary)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Max Capacity (kg):</label>
+                        <input type="number" step="any" id="maxCapacity" name="capacity" placeholder="e.g. 50" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Verification Interval 'e' (grams):</label>
+                        <input type="number" step="any" id="eValue" name="e_value" placeholder="e.g. 5" required>
+                    </div>
+                </div>
+
+                <div class="form-card">
+                    <h4><i class="fas fa-thermometer-half"></i> Environmental Conditions</h4>
+
+                    <div class="form-group">
+                        <label>Temperature (°C):</label>
+                        <input type="number" step="any" name="temperature" placeholder="25" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Humidity (%):</label>
+                        <input type="number" step="any" name="humidity" placeholder="50" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Voltage Supply (V):</label>
+                        <input type="number" step="any" name="voltage" placeholder="220" required>
+                    </div>
+                </div>
+
+                <button type="button" class="btn" id="proceedBtn" onclick="proceed()"><i class="fas fa-arrow-right"></i>
+                    Proceed to Test Procedures</button>
+            </form>
+        </div>
+    </div>
+</body>
+<script src="script.js"></script>
+
+</html>

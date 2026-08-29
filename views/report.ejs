@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Official Report Certificate</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/style.css">
+</head>
+
+<body>
+    <nav class="navbar">
+        <a href="/" class="navbar-brand">
+            <img src="/images/logo.jpg" alt="Bytebrigade Logo">
+            Bytebrigade
+        </a>
+        <div class="navbar-links">
+            <a href="/"><i class="fas fa-home"></i> Home</a>
+            <a href="/new-test"><i class="fas fa-play"></i> New Test</a>
+            <a href="/dashboard"><i class="fas fa-folder-open"></i> Dashboard</a>
+        </div>
+    </nav>
+    <div class="container">
+        <center style="margin-bottom: 20px;">
+            <button class="btn btn-success" onclick="downloadPDF()"><i class="fas fa-file-pdf"></i> Download Official
+                Certificate</button>
+            <a href="/dashboard" class="btn btn-secondary" style="margin-left: 10px;"><i class="fas fa-folder-open"></i>
+                Back to Dashboard</a>
+        </center>
+
+        <div id="report-content" class="certificate-wrapper">
+            <div class="certificate-inner">
+                <div class="cert-header">
+                    <h1>Certificate of Calibration</h1>
+                    <h3>Non-Automatic Weighing Instruments (NAWI)</h3>
+                </div>
+
+                <div class="cert-grid">
+                    <div class="cert-section" id="instrument-details">
+                        <!-- Injected by JS -->
+                    </div>
+                    <div class="cert-section" id="env-details">
+                        <!-- Injected by JS -->
+                    </div>
+                </div>
+
+                <div class="cert-tables">
+                    <div class="cert-table-wrapper full-width">
+                        <h4>1. Weighing Performance Test</h4>
+                        <table border="1" style="width: 100%; text-align: left;">
+                            <thead>
+                                <tr>
+                                    <th>True Weight</th>
+                                    <th>Displayed Reading</th>
+                                    <th>Result</th>
+                                </tr>
+                            </thead>
+                            <tbody id="test1-table-body"></tbody>
+                        </table>
+                    </div>
+
+                    <div class="cert-table-wrapper">
+                        <h4>2. Repeatability Test</h4>
+                        <table border="1" style="width: 100%; text-align: left;">
+                            <thead>
+                                <tr>
+                                    <th>Reading</th>
+                                    <th>Result</th>
+                                </tr>
+                            </thead>
+                            <tbody id="test2-table-body"></tbody>
+                        </table>
+                    </div>
+
+                    <div class="cert-table-wrapper">
+                        <h4>3. Eccentricity Test</h4>
+                        <table border="1" style="width: 100%; text-align: left;">
+                            <thead>
+                                <tr>
+                                    <th>Position</th>
+                                    <th>Reading</th>
+                                </tr>
+                            </thead>
+                            <tbody id="test3-table-body"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="cert-footer">
+                    <div class="seal">
+                        Official<br>Calibrated<br>Seal
+                    </div>
+                    <div class="signature-block">
+                        <div class="signature-line">Authorized Signature</div>
+                    </div>
+                    <div class="signature-block">
+                        <div class="signature-line">Date of Issue</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script src="result.js"></script>
+
+</html>

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NAWI Test Report Generator</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/style.css">
+</head>
+
+<body>
+    <nav class="navbar">
+        <a href="/" class="navbar-brand">
+            <img src="/images/logo.jpg" alt="Bytebrigade Logo">
+            Bytebrigade
+        </a>
+        <div class="navbar-links">
+            <a href="/"><i class="fas fa-home"></i> Home</a>
+            <a href="/new-test"><i class="fas fa-play"></i> New Test</a>
+            <a href="/dashboard"><i class="fas fa-folder-open"></i> Dashboard</a>
+        </div>
+    </nav>
+    <div class="container">
+        <div class="hero">
+            <img src="/images/hero.jpg" alt="Analytical Balance in Laboratory">
+            <h1>NAWI Test Report Generator</h1>
+            <p>A comprehensive testing suite for Non-Automatic Weighing Instruments in compliance with OIML standards.
+            </p>
+        </div>
+
+        <div class="actions">
+            <a href="/new-test"><button class="btn"><i class="fas fa-play"></i> Start New Test</button></a>
+            <a href="/dashboard"><button class="btn btn-secondary"><i class="fas fa-folder-open"></i> View
+                    Dashboard</button></a>
+        </div>
+
+        <div class="info-grid">
+            <div class="info-card">
+                <i class="fas fa-balance-scale"></i>
+                <h4>Weighing Performance</h4>
+                <p>Automatically calculates Maximum Permissible Error (MPE) thresholds based on the instrument's
+                    accuracy class, capacity, and verification scale interval (e).</p>
+            </div>
+            <div class="info-card">
+                <i class="fas fa-sync-alt"></i>
+                <h4>Repeatability</h4>
+                <p>Ensures that the instrument provides consistent results when the same load is applied under identical
+                    environmental conditions.</p>
+            </div>
+            <div class="info-card">
+                <i class="fas fa-crosshairs"></i>
+                <h4>Eccentricity</h4>
+                <p>Verifies the accuracy of the instrument when a load is placed in different positions (center,
+                    front-left, back-right, etc.) on the load receptor.</p>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
