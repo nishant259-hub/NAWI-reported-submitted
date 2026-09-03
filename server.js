@@ -100,7 +100,7 @@ app.post("/api/analyze", async (req, res) => {
                 Data: ${JSON.stringify(reportData)}`;
 
         const result = await ai.models.generateContent({
-            model: "gemini-3.6-flash",
+            model: "gemini-3.1-flash-lite",
             contents: prompt
         });
 
