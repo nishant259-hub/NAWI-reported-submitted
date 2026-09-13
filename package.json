@@ -1,4 +1,7 @@
 {
+  "scripts": {
+    "start": "node server.js"
+  },
   "dependencies": {
     "@google/genai": "^2.21.0",
     "@google/generative-ai": "^0.24.1",
@@ -6,7 +9,6 @@
     "dotenv": "^17.4.2",
     "ejs": "^6.0.1",
     "express": "^5.2.1",
-    "mongoose": "^9.9.4",
-    "node": "^26.8.1"
+    "mongoose": "^9.9.4"
   }
 }
