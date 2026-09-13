@@ -20,7 +20,7 @@
                 <div class="dashboard-home">
                     
                     <div class="greeting">
-                        <h1>Good morning, Nishant</h1>
+                        <h1>Good morning, <%= (typeof username !== 'undefined' && username) ? username : 'Nishant' %></h1>
                         <p>Here's your testing overview</p>
                     </div>
 

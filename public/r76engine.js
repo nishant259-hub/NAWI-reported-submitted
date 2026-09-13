@@ -19,21 +19,56 @@ function getMPE(load_g, e_g, cls) {
     const c = _normalizeClass(cls);
     const m = load_g / e_g;
     let mult = 0;
-    if      (c === "I")    { if (m<=50000) mult=0.5; else if (m<=200000) mult=1.0; else mult=1.5; }
-    else if (c === "II")   { if (m<=5000)  mult=0.5; else if (m<=20000)  mult=1.0; else mult=1.5; }
-    else if (c === "III")  { if (m<=500)   mult=0.5; else if (m<=2000)   mult=1.0; else mult=1.5; }
-    else if (c === "IIII") { if (m<=50)    mult=0.5; else if (m<=200)    mult=1.0; else mult=1.5; }
+    
+    // Fallback defaults
+    let intervals = [];
+    if      (c === "I")    intervals = [50000, 200000];
+    else if (c === "II")   intervals = [5000, 20000];
+    else if (c === "III")  intervals = [500, 2000];
+    else if (c === "IIII") intervals = [50, 200];
+
+    let mpe_e = [0.5, 1.0, 1.5];
+
+    // Override with dynamic rules if available
+    if (typeof window !== 'undefined' && window.ACTIVE_OIML_RULES && window.ACTIVE_OIML_RULES.mpe) {
+        const rules = window.ACTIVE_OIML_RULES.mpe;
+        const clsKey = "class_" + c;
+        if (rules[clsKey]) {
+            intervals = rules[clsKey].e_intervals;
+            mpe_e = rules[clsKey].mpe_e || mpe_e;
+        }
+    }
+
+    if (intervals.length >= 2) {
+        if (m <= intervals[0]) mult = mpe_e[0];
+        else if (m <= intervals[1]) mult = mpe_e[1];
+        else mult = mpe_e[2] || 1.5;
+    }
+
     return mult * e_g;
 }
 
 // ── MPE TIER BOUNDARIES ────────────────────────────────────────
 function getMPETierBoundaries(cls, e_g) {
     const c = _normalizeClass(cls);
-    if (c === "I")    return [50000*e_g, 200000*e_g];
-    if (c === "II")   return [5000*e_g,  20000*e_g];
-    if (c === "III")  return [500*e_g,   2000*e_g];
-    if (c === "IIII") return [50*e_g,    200*e_g];
-    return [];
+    let intervals = [];
+
+    if (typeof window !== 'undefined' && window.ACTIVE_OIML_RULES && window.ACTIVE_OIML_RULES.mpe) {
+        const rules = window.ACTIVE_OIML_RULES.mpe;
+        const clsKey = "class_" + c;
+        if (rules[clsKey] && rules[clsKey].e_intervals) {
+            intervals = rules[clsKey].e_intervals;
+        }
+    }
+
+    if (intervals.length === 0) {
+        if (c === "I")    intervals = [50000, 200000];
+        else if (c === "II")   intervals = [5000, 20000];
+        else if (c === "III")  intervals = [500, 2000];
+        else if (c === "IIII") intervals = [50, 200];
+    }
+
+    return intervals.map(v => v * e_g);
 }
 
 // ── TEST POINT GENERATION  (OIML R-76 §3.6) ───────────────────

@@ -21,11 +21,17 @@
         
         <div class="demo-box">
             <h4><i class="fas fa-info-circle"></i> Demo Credentials</h4>
-            <p><strong>Email:</strong> admin@bytebrigade.com</p>
-            <p><strong>Password:</strong> sih2026demo</p>
+            <p><strong>Admin:</strong> admin@bytebrigade.com / admin</p>
+            <p><strong>Tester:</strong> tester@bytebrigade.com / tester</p>
         </div>
 
-        <form action="/home" method="GET">
+        <% if (typeof error !== 'undefined' && error) { %>
+            <div style="background: #f8d7da; color: #721c24; padding: 10px; border-radius: 4px; margin-bottom: 15px; text-align: center;">
+                <%= error %>
+            </div>
+        <% } %>
+
+        <form action="/login" method="POST">
             <div class="form-group">
                 <label>Email Address</label>
                 <input type="email" name="email" value="admin@bytebrigade.com" required>
@@ -33,7 +39,7 @@
             </div>
             <div class="form-group">
                 <label>Password</label>
-                <input type="password" name="password" value="sih2026demo" required>
+                <input type="password" name="password" value="admin" required>
                 <i class="fas fa-lock input-icon"></i>
             </div>
             <button type="submit" class="btn-auth">Sign In</button>

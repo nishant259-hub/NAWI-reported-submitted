@@ -4,16 +4,86 @@
         <div class="brand-text">NAWI <span>REPORTED</span></div>
     </div>
     <div class="sidebar-nav">
-        <a href="/home" class="nav-item"><i class="fas fa-th-large"></i> <span>Dashboard</span></a>
-        <a href="/new-test" class="nav-item"><i class="fas fa-plus"></i> <span>New Test</span></a>
-        <a href="/test-plan" class="nav-item" id="nav-test-plan"><i class="fas fa-clipboard-list"></i> <span id="lbl-test-plan">Test Planner</span></a>
-        <a href="/tests" class="nav-item" id="nav-tests"><i class="fas fa-flask"></i> <span id="lbl-tests">Test Execution</span></a>
-        <a href="/history" class="nav-item"><i class="fas fa-history"></i> <span>History</span></a>
+        <% if (typeof userRole !== 'undefined' && userRole === 'admin') { %>
+            <!-- ADMIN NAV -->
+            <a href="/admin" class="nav-item"><i class="fas fa-user-shield"></i> <span>Admin Dashboard</span></a>
+            <a href="/history" class="nav-item"><i class="fas fa-history"></i> <span>All Reports</span></a>
+        <% } else { %>
+            <!-- TESTER NAV -->
+            <a href="/home" class="nav-item"><i class="fas fa-th-large"></i> <span>Dashboard</span></a>
+            <a href="/new-test" class="nav-item"><i class="fas fa-plus"></i> <span>New Test</span></a>
+            <a href="/test-plan" class="nav-item" id="nav-test-plan"><i class="fas fa-clipboard-list"></i> <span id="lbl-test-plan">Test Planner</span></a>
+            <a href="/tests" class="nav-item" id="nav-tests"><i class="fas fa-flask"></i> <span id="lbl-tests">Test Execution</span></a>
+            <a href="/history" class="nav-item"><i class="fas fa-history"></i> <span>History</span></a>
+        <% } %>
     </div>
-    <div class="sidebar-footer">
-        <a href="#" class="nav-item" style="color:var(--color-muted);"><i class="fas fa-cog"></i> <span>Settings</span></a>
+
+    <!-- User info + Logout at bottom -->
+    <div class="sidebar-user">
+        <div class="sidebar-user-info">
+            <div class="sidebar-avatar">
+                <%= (typeof username !== 'undefined' && username) ? username.charAt(0).toUpperCase() : 'U' %>
+            </div>
+            <div>
+                <div class="sidebar-username"><%= (typeof username !== 'undefined' && username) ? username : 'User' %></div>
+                <div class="sidebar-role"><%= (typeof userRole !== 'undefined' && userRole === 'admin') ? 'Administrator' : 'Tester' %></div>
+            </div>
+        </div>
+        <a href="/logout" class="sidebar-logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
     </div>
 </aside>
+
+<style>
+    .sidebar-user {
+        padding: 16px;
+        border-top: 1px solid rgba(255,255,255,0.06);
+        margin-top: auto;
+    }
+    .sidebar-user-info {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 12px;
+    }
+    .sidebar-avatar {
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--brand, #0d9488), #7c3aed);
+        display: grid;
+        place-items: center;
+        color: white;
+        font-weight: 700;
+        font-size: 0.875rem;
+        flex-shrink: 0;
+    }
+    .sidebar-username {
+        color: white;
+        font-size: 0.875rem;
+        font-weight: 600;
+    }
+    .sidebar-role {
+        color: #94a3b8;
+        font-size: 0.72rem;
+    }
+    .sidebar-logout {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: #f87171;
+        font-size: 0.82rem;
+        font-weight: 500;
+        text-decoration: none;
+        padding: 8px 10px;
+        border-radius: 6px;
+        transition: background 0.15s;
+        width: 100%;
+    }
+    .sidebar-logout:hover {
+        background: rgba(239, 68, 68, 0.1);
+        color: #fca5a5;
+    }
+</style>
 
 <script>
     document.addEventListener("DOMContentLoaded", function() {

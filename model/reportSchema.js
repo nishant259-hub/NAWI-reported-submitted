@@ -18,6 +18,13 @@ const ReportSchema = new mongoose.Schema({
     form_tare_results: mongoose.Schema.Types.Mixed,
     form_tilt_data:    mongoose.Schema.Types.Mixed,   // Tilt test readings
     form_tilt_results: mongoose.Schema.Types.Mixed,
+    
+    // New fields for the updated flow
+    lab_details:       mongoose.Schema.Types.Mixed,
+    instrument_photo:  String, // base64
+    rule_set_version:  String, // e.g. "OIML R76 V1"
+    createdBy:         String, // username of tester
+
     createdAt:         { type: Date, default: Date.now }
 });
 

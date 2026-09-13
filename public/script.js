@@ -7,7 +7,7 @@
 // SECTION 1 — new-test PAGE: Save Instrument Data
 // ────────────────────────────────────────────────────────────────
 
-function proceed() {
+async function proceed() {
     const form = document.getElementById("initial-form");
     if (!form || !form.reportValidity()) return;
 
@@ -23,7 +23,33 @@ function proceed() {
 
     const minG = Number(data.min_capacity_g) > 0 ? Number(data.min_capacity_g) : (20 * eG);
 
+    // Read photo as base64 if provided
+    let photoBase64 = "";
+    const photoInput = document.getElementById("instrument_photo");
+    if (photoInput && photoInput.files && photoInput.files[0]) {
+        const file = photoInput.files[0];
+        photoBase64 = await new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.onloadend = () => resolve(reader.result);
+            reader.readAsDataURL(file);
+        });
+    }
+
+    // Capture Lab Details
+    const labDetails = {
+        name: data.lab_name,
+        location: data.lab_location,
+        temperature: data.temperature,
+        humidity: data.humidity,
+        voltage: data.voltage
+    };
+
     localStorage.setItem("InstrumentData",    JSON.stringify(data));
+    localStorage.setItem("LabDetails",        JSON.stringify(labDetails));
+    localStorage.setItem("InstrumentPhoto",   photoBase64);
+    localStorage.setItem("RuleSetVersion",    data.rule_set_version || "OIML R-76 V1");
+    localStorage.setItem("RuleSetRules",      JSON.stringify(window.ACTIVE_OIML_RULES || {}));
+    
     localStorage.setItem("Capacity",          maxKg);
     localStorage.setItem("eValue",            eG);
     localStorage.setItem("ClassValue",        data.Class_value);
@@ -794,7 +820,10 @@ if (_container) {
             form_tare:         get("form_tare"),
             form_tare_results: get("form_tare_results"),
             form_tilt:         get("form_tilt"),
-            form_tilt_results: get("form_tilt_results")
+            form_tilt_results: get("form_tilt_results"),
+            lab_details:       get("LabDetails"),
+            instrument_photo:  localStorage.getItem("InstrumentPhoto") || "",
+            rule_set_version:  localStorage.getItem("RuleSetVersion") || "Unknown"
         };
 
         fetch("/api/save-report", {

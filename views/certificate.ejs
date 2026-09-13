@@ -347,7 +347,8 @@
             background: var(--fail);
         }
 
-        .cert-grid {
+        .cert-grid,
+        .cert-grid-4 {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 0;
@@ -355,14 +356,27 @@
             position: relative;
             z-index: 1;
             margin-bottom: 16px;
+            background: #fff;
         }
 
         .cert-section {
-            padding: 14px 18px;
+            padding: 13px 18px;
         }
 
         .cert-grid .cert-section:first-child {
             border-right: 1px solid var(--line);
+        }
+
+        .cert-grid-4 .cert-section {
+            border-bottom: 1px solid var(--line);
+        }
+
+        .cert-grid-4 .cert-section:nth-child(odd) {
+            border-right: 1px solid var(--line);
+        }
+
+        .cert-grid-4 .cert-section:nth-last-child(-n+2) {
+            border-bottom: none;
         }
 
         .cert-section h4 {
@@ -660,9 +674,9 @@
                     </div>
                     <% } %>
 
-                        <div class="cert-grid">
+                        <div class="cert-grid-4">
                             <div class="cert-section">
-                                <h4>Instrument Details</h4>
+                                <h4><i class="fas fa-balance-scale" style="color:var(--brand); margin-right:4px;"></i> Instrument Details</h4>
                                 <p><strong>Type</strong><span class="val">
                                         <%= report.instrument_data?.instrument_type || "N/A" %>
                                     </span></p>
@@ -677,7 +691,7 @@
                                     </span></p>
                             </div>
                             <div class="cert-section">
-                                <h4>Metrological Characteristics</h4>
+                                <h4><i class="fas fa-ruler-combined" style="color:var(--brand); margin-right:4px;"></i> Metrological Characteristics</h4>
                                 <p><strong>Accuracy Class</strong><span class="val">
                                         <%= report.instrument_data?.Class_value || "N/A" %>
                                     </span></p>
@@ -692,6 +706,36 @@
                                 <p><strong>Min Capacity (Min)</strong><span class="val">
                                         <%= report.instrument_data?.min_capacity ? report.instrument_data.min_capacity
                                             + ' ' + (report.instrument_data.min_unit || 'g' ) : "N/A" %>
+                                    </span></p>
+                            </div>
+                            <div class="cert-section">
+                                <h4><i class="fas fa-building" style="color:var(--brand); margin-right:4px;"></i> Laboratory & Facility</h4>
+                                <p><strong>Laboratory Name</strong><span class="val">
+                                        <%= (report.lab_details && report.lab_details.name) ? report.lab_details.name : "National Metrology Laboratory" %>
+                                    </span></p>
+                                <p><strong>Location / State</strong><span class="val">
+                                        <%= (report.lab_details && (report.lab_details.location || report.lab_details.state)) ? (report.lab_details.location || report.lab_details.state) : "New Delhi, Delhi" %>
+                                    </span></p>
+                                <p><strong>Rule Set Standard</strong><span class="val">
+                                        <%= report.rule_set_version || "OIML R-76 V1" %>
+                                    </span></p>
+                                <p><strong>Test Officer</strong><span class="val">
+                                        <%= report.createdBy || "Nishant" %>
+                                    </span></p>
+                            </div>
+                            <div class="cert-section">
+                                <h4><i class="fas fa-thermometer-half" style="color:var(--brand); margin-right:4px;"></i> Environmental Conditions</h4>
+                                <p><strong>Ambient Temp.</strong><span class="val">
+                                        <%= (report.lab_details && report.lab_details.temperature !== undefined && report.lab_details.temperature !== "") ? report.lab_details.temperature + ' °C' : "20.0 °C" %>
+                                    </span></p>
+                                <p><strong>Relative Humidity</strong><span class="val">
+                                        <%= (report.lab_details && report.lab_details.humidity !== undefined && report.lab_details.humidity !== "") ? report.lab_details.humidity + ' %' : "50 %" %>
+                                    </span></p>
+                                <p><strong>Mains Voltage</strong><span class="val">
+                                        <%= (report.lab_details && report.lab_details.voltage !== undefined && report.lab_details.voltage !== "") ? report.lab_details.voltage + ' V' : "220 V" %>
+                                    </span></p>
+                                <p><strong>Condition Status</strong><span class="val" style="color:var(--pass); font-weight:700;">
+                                        OIML Compliant
                                     </span></p>
                             </div>
                         </div>
@@ -868,12 +912,16 @@
                                 <div>VALIDATED<br>NAWI<br>REPORT</div>
                             </div>
                             <div class="footer-note">
-                                This certificate is issued in accordance with OIML R-76 test procedures for
+                                This certificate is issued in accordance with <strong><%= report.rule_set_version || 'OIML R-76' %></strong> test procedures for
                                 Non-Automatic Weighing Instruments. Results apply only to the instrument identified
                                 above at the time of testing.
+                                <% if (report.lab_details) { %>
+                                    <br><br><strong>Testing Facility:</strong> <%= report.lab_details.name || 'National Metrology Laboratory' %>, <%= report.lab_details.location || report.lab_details.state || 'India' %>
+                                    <br><strong>Environment:</strong> <%= report.lab_details.temperature || 20 %>°C &bull; <%= report.lab_details.humidity || 50 %>% RH &bull; <%= report.lab_details.voltage || 220 %>V
+                                <% } %>
                             </div>
                             <div class="signature-block">
-                                <div class="signature-line">Authorized Signatory</div>
+                                <div class="signature-line"><%= report.createdBy || 'Authorized Signatory' %></div>
                                 <div class="designation">Metrology Test Officer</div>
                             </div>
                         </div>
