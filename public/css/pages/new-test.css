@@ -1,0 +1,106 @@
+/* new-test.css */
+.page-header {
+    margin-bottom: 32px;
+}
+.page-header h2 {
+    margin: 0;
+    color: var(--color-ink);
+    font-family: var(--font-display);
+    font-size: 24px;
+}
+.page-header p {
+    margin: 8px 0 0;
+    color: var(--color-muted);
+    font-size: 14px;
+}
+
+.form-card {
+    max-width: 550px;
+    padding: 28px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+    background: #fff;
+    border: 1px solid var(--color-line-soft);
+}
+.form-card h3 {
+    border-bottom: 1px solid var(--color-line);
+    padding-bottom: 16px;
+    margin-top: 0;
+    color: var(--color-ink);
+    font-size: 18px;
+}
+
+#initial-form {
+    margin-top: 24px;
+}
+
+.form-group {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+.form-group label {
+    margin: 0;
+    width: 40%;
+    font-weight: 600;
+    color: var(--color-muted);
+}
+.form-input {
+    width: 55%;
+    padding: 10px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+}
+.form-input-group {
+    width: 55%;
+    display: flex;
+    gap: 8px;
+}
+.form-input-group input {
+    flex: 1;
+    padding: 10px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+}
+.form-input-group select {
+    width: 70px;
+    padding: 10px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+}
+
+.form-actions {
+    text-align: right;
+    margin-top: 24px;
+}
+.btn-submit {
+    padding: 12px 24px;
+    font-size: 15px;
+    background: var(--color-teal);
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+}
+.btn-submit:hover {
+    background: var(--color-teal-dark);
+}
+
+/* =========================================================================
+   MOBILE RESPONSIVE OVERRIDES (NEW TEST)
+   ========================================================================= */
+@media screen and (max-width: 768px) {
+    .form-group {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 6px;
+    }
+    
+    .form-group label, 
+    .form-input, 
+    .form-input-group {
+        width: 100%;
+    }
+}

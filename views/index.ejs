@@ -1,61 +1,106 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NAWI Test Report Generator</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/pages/index.css">
 </head>
-
 <body>
+
     <nav class="navbar">
-        <a href="/" class="navbar-brand">
-            <img src="/images/logo.jpg" alt="Bytebrigade Logo">
-            Bytebrigade
+        <a href="/" class="nav-brand">
+            <i class="fas fa-balance-scale-right"></i> NAWI REPORTED
         </a>
-        <div class="navbar-links">
-            <a href="/"><i class="fas fa-home"></i> Home</a>
-            <a href="/new-test"><i class="fas fa-play"></i> New Test</a>
-            <a href="/dashboard"><i class="fas fa-folder-open"></i> Dashboard</a>
+        <div class="nav-center">
+            <a href="#workflow">How it works</a>
+            <a href="#capabilities">Features</a>
+            <a href="#">About</a>
+        </div>
+        <div class="nav-actions">
+            <a href="/login" class="btn-text">Sign In</a>
+            <a href="/login" class="btn-primary">Get Started</a>
         </div>
     </nav>
-    <div class="container">
-        <div class="hero">
-            <img src="/images/hero.jpg" alt="Analytical Balance in Laboratory">
-            <h1>NAWI Test Report Generator</h1>
-            <p>A comprehensive testing suite for Non-Automatic Weighing Instruments in compliance with OIML standards.
-            </p>
-        </div>
 
-        <div class="actions">
-            <a href="/new-test"><button class="btn"><i class="fas fa-play"></i> Start New Test</button></a>
-            <a href="/dashboard"><button class="btn btn-secondary"><i class="fas fa-folder-open"></i> View
-                    Dashboard</button></a>
+    <header class="hero">
+        <div class="hero-content">
+            <h1>Automate NAWI Testing.</h1>
+            <p>From instrument configuration to test execution, compliance evaluation and final report — all in one standardized digital workflow.</p>
+            <div class="hero-actions">
+                <a href="/login" class="btn-primary">Start New Test</a>
+                <a href="#capabilities" class="btn-outline">Explore Platform</a>
+            </div>
         </div>
+        <div class="hero-image">
+            <!-- Ensure this path points to the new image -->
+            <img src="/images/scale-hero.jpg" alt="Industrial Weighing Scale">
+        </div>
+    </header>
 
-        <div class="info-grid">
-            <div class="info-card">
-                <div class="icon-wrapper"><i class="fas fa-balance-scale"></i></div>
-                <h4>Weighing Performance</h4>
-                <p>Automatically calculates Maximum Permissible Error (MPE) thresholds based on the instrument's
-                    accuracy class, capacity, and verification scale interval (e).</p>
+    <section id="workflow" class="timeline-section">
+        <div class="section-header">
+            <h2>The Testing Workflow</h2>
+            <p>A standardized 4-step process for rigorous compliance.</p>
+        </div>
+        <div class="timeline">
+            <div class="timeline-step">
+                <div class="step-num">01</div>
+                <h3>Instrument Setup</h3>
+                <p>Define specifications and physical conditions.</p>
             </div>
-            <div class="info-card">
-                <div class="icon-wrapper"><i class="fas fa-sync-alt"></i></div>
-                <h4>Repeatability</h4>
-                <p>Ensures that the instrument provides consistent results when the same load is applied under identical
-                    environmental conditions.</p>
+            <div class="timeline-step">
+                <div class="step-num">02</div>
+                <h3>Automatic Test Planner</h3>
+                <p>Dynamically generates applicable tests based on class.</p>
             </div>
-            <div class="info-card">
-                <div class="icon-wrapper"><i class="fas fa-crosshairs"></i></div>
-                <h4>Eccentricity</h4>
-                <p>Verifies the accuracy of the instrument when a load is placed in different positions (center,
-                    front-left, back-right, etc.) on the load receptor.</p>
+            <div class="timeline-step">
+                <div class="step-num">03</div>
+                <h3>Guided Execution</h3>
+                <p>Record digital observations against real-time limits.</p>
+            </div>
+            <div class="timeline-step">
+                <div class="step-num">04</div>
+                <h3>Automated Report</h3>
+                <p>Print standardized verification certificates.</p>
             </div>
         </div>
-    </div>
+    </section>
+
+    <section id="capabilities" class="capabilities-section">
+        <div class="section-header" style="text-align:center;">
+            <h2>Core Capabilities</h2>
+            <p>Built for verification inspectors and manufacturers.</p>
+        </div>
+        <div class="cap-grid">
+            <div class="cap-card">
+                <div class="cap-icon"><i class="fas fa-clipboard-list"></i></div>
+                <h3>Automatic Test Planner</h3>
+                <p>Dynamically generates the required test workflow—including Weighing Performance, Repeatability, and Eccentricity—based on the scale's Accuracy Class (I, II, III, IIII).</p>
+            </div>
+            <div class="cap-card">
+                <div class="cap-icon"><i class="fas fa-microchip"></i></div>
+                <h3>R-76 Rule Engine</h3>
+                <p>Automated Maximum Permissible Error (MPE) calculations and real-time compliance evaluation across Tier 1, 2, and 3 test load limits.</p>
+            </div>
+            <div class="cap-card">
+                <div class="cap-icon"><i class="fas fa-tasks"></i></div>
+                <h3>Guided Test Execution</h3>
+                <p>Record digital observations step-by-step. The system provides immediate visual feedback if errors exceed permissible limits during testing.</p>
+            </div>
+            <div class="cap-card">
+                <div class="cap-icon"><i class="fas fa-file-pdf"></i></div>
+                <h3>Report Generator</h3>
+                <p>Instantly generate an immutable, standardized PDF certificate with a granular breakdown of all test readings, errors, and overall Pass/Fail status.</p>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        &copy; 2026 NAWI Reported. SIH Prototype Built by Team Byte Brigade.
+    </footer>
+
 </body>
-
 </html>

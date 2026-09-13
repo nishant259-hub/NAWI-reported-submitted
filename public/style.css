@@ -616,51 +616,6 @@ hr {
 }
 
 /* =========================================================================
-   AUTOMATED DIAGNOSTIC SUMMARY
-   ========================================================================= */
-.formal-diagnostic-box {
-    margin: 30px 0;
-    padding: 20px;
-    background-color: #fafafa;
-    border: 1px solid #d1d5db;
-    border-radius: 4px;
-    font-family: var(--font-body);
-}
-
-.formal-diagnostic-box h4 {
-    color: #374151;
-    margin-top: 0;
-    margin-bottom: 15px;
-    font-size: 1.05rem;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    border-bottom: 1px solid #e5e7eb;
-    padding-bottom: 8px;
-}
-
-.diagnostic-loading {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    color: #6b7280;
-    font-size: 0.95rem;
-    font-style: italic;
-}
-
-.diagnostic-content p {
-    margin: 8px 0;
-    font-size: 0.95rem;
-    color: #1f2937;
-    line-height: 1.6;
-}
-
-.diagnostic-content p strong {
-    color: #111827;
-    display: inline-block;
-    min-width: 180px;
-}
-
-/* =========================================================================
    RESPONSIVE DESIGN
    ========================================================================= */
 @media screen and (max-width: 768px) {

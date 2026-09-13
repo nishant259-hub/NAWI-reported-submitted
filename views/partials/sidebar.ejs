@@ -1,0 +1,79 @@
+<aside class="app-sidebar">
+    <div class="sidebar-brand">
+        <div class="brand-icon"><i class="fas fa-balance-scale-right"></i></div>
+        <div class="brand-text">NAWI <span>REPORTED</span></div>
+    </div>
+    <div class="sidebar-nav">
+        <a href="/home" class="nav-item"><i class="fas fa-th-large"></i> <span>Dashboard</span></a>
+        <a href="/new-test" class="nav-item"><i class="fas fa-plus"></i> <span>New Test</span></a>
+        <a href="/test-plan" class="nav-item" id="nav-test-plan"><i class="fas fa-clipboard-list"></i> <span id="lbl-test-plan">Test Planner</span></a>
+        <a href="/tests" class="nav-item" id="nav-tests"><i class="fas fa-flask"></i> <span id="lbl-tests">Test Execution</span></a>
+        <a href="/history" class="nav-item"><i class="fas fa-history"></i> <span>History</span></a>
+    </div>
+    <div class="sidebar-footer">
+        <a href="#" class="nav-item" style="color:var(--color-muted);"><i class="fas fa-cog"></i> <span>Settings</span></a>
+    </div>
+</aside>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const path = window.location.pathname;
+        const navItems = document.querySelectorAll(".sidebar-nav .nav-item");
+        navItems.forEach(item => {
+            if (item.getAttribute("href") === path) {
+                item.classList.add("active");
+            } else {
+                item.classList.remove("active");
+            }
+        });
+        
+        // Handle Planner and Execution links if no test is active
+        const planBtn = document.getElementById("nav-test-plan");
+        const testBtn = document.getElementById("nav-tests");
+        const lblPlan = document.getElementById("lbl-test-plan");
+        const lblTest = document.getElementById("lbl-tests");
+
+        function showToast(message) {
+            let toast = document.getElementById("global-toast");
+            if (!toast) {
+                toast = document.createElement("div");
+                toast.id = "global-toast";
+                toast.innerHTML = `
+                    <div style="color: #e74c3c; font-size: 22px;"><i class="fas fa-exclamation-circle"></i></div>
+                    <div id="toast-msg" style="color: #0B2A3B; font-family: 'IBM Plex Sans', sans-serif; font-weight: 500; font-size: 14px;"></div>
+                `;
+                Object.assign(toast.style, {
+                    position: "fixed", bottom: "-100px", right: "32px", background: "#fff",
+                    borderLeft: "4px solid #e74c3c", boxShadow: "0 4px 20px rgba(0,0,0,0.1)",
+                    padding: "16px 24px", borderRadius: "8px", display: "flex", alignItems: "center",
+                    gap: "16px", zIndex: "1000", transition: "bottom 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)"
+                });
+                document.body.appendChild(toast);
+            }
+            document.getElementById("toast-msg").textContent = message;
+            
+            // Trigger animation
+            setTimeout(() => { toast.style.bottom = "32px"; }, 10);
+            setTimeout(() => { toast.style.bottom = "-100px"; }, 4000);
+        }
+
+        if (!localStorage.getItem("InstrumentData")) {
+            // No test active: allow click but show toast and block navigation
+            const blockNav = function(e) {
+                e.preventDefault();
+                showToast("No active test session found. Please start a new test to proceed.");
+            };
+            if (planBtn) { planBtn.addEventListener("click", blockNav); }
+            if (testBtn) { testBtn.addEventListener("click", blockNav); }
+            
+            // If they somehow land directly on the page, kick them back to new-test
+            if (path === '/test-plan' || path === '/tests') {
+                window.location.href = "/new-test";
+            }
+        } else {
+            // There is an ongoing test session
+            if (lblPlan && path !== '/test-plan') lblPlan.textContent = "Resume Planner";
+            if (lblTest && path !== '/tests') lblTest.textContent = "Resume Execution";
+        }
+    });
+</script>

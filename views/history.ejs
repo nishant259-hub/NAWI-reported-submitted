@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>History - NAWI Test Report Generator</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="/dashboard.css">
+    <link rel="stylesheet" href="/css/pages/history.css">
+</head>
+
+<body>
+    <div class="app-wrapper">
+        <%- include('partials/sidebar') %>
+        <div class="app-main">
+            <%- include('partials/header') %>
+            <div class="app-content">
+                <div class="history-page">
+                    
+                    <div class="header-section">
+                        <h1>HISTORY</h1>
+                    </div>
+
+                    <div class="search-container">
+                        <label>Search by Test ID / Serial No / Manufacturer</label>
+                        <div class="search-box">
+                            <i class="fas fa-search"></i>
+                            <input type="text" id="searchInput" placeholder="Search........................" onkeyup="filterTable()">
+                        </div>
+                    </div>
+
+                    <div class="filters-section">
+                        <h3>Filters:</h3>
+                        <div class="filters-grid">
+                            <div class="filter-group">
+                                <label>Status</label>
+                                <select id="filterStatus" onchange="filterTable()">
+                                    <option value="">All</option>
+                                    <option value="PASS">PASS</option>
+                                    <option value="FAIL">FAIL</option>
+                                </select>
+                            </div>
+                            <div class="filter-group">
+                                <label>Date</label>
+                                <input type="date" id="filterDate" onchange="filterTable()">
+                            </div>
+                            <div class="filter-group">
+                                <label>Class</label>
+                                <select id="filterClass" onchange="filterTable()">
+                                    <option value="">All</option>
+                                    <option value="I">Class I</option>
+                                    <option value="II">Class II</option>
+                                    <option value="III">Class III</option>
+                                    <option value="IIII">Class IIII</option>
+                                </select>
+                            </div>
+                            <div class="filter-group">
+                                <label>Test Type</label>
+                                <select id="filterType" onchange="filterTable()">
+                                    <option value="">All</option>
+                                    <option value="OIML R-76">OIML R-76</option>
+                                </select>
+                            </div>
+                            <div class="filter-group">
+                                <label>Result</label>
+                                <select id="filterResult" onchange="filterTable()">
+                                    <option value="">All</option>
+                                    <option value="PASS">PASS</option>
+                                    <option value="FAIL">FAIL</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="table-container">
+                        <table id="historyTable">
+                            <thead>
+                                <tr>
+                                    <th>Test ID</th>
+                                    <th>Instrument</th>
+                                    <th>Serial No.</th>
+                                    <th>Date</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% if (reports && reports.length > 0) { %>
+                                    <% reports.forEach(r => { 
+                                        const dateObj = new Date(r.createdAt);
+                                        const dateStr = dateObj.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+                                        const filterDate = dateObj.toISOString().split('T')[0];
+                                    %>
+                                        <tr onclick="window.location.href='/report?id=<%= r._id %>'" 
+                                            data-search="<%= r._id.toString().substring(0,8).toUpperCase() %> <%= (r.instrument_id || '').toUpperCase() %> <%= (r.serial_no || '').toUpperCase() %>"
+                                            data-status="<%= r.status %>"
+                                            data-date="<%= filterDate %>"
+                                            data-class="<%= r.accuracy_class %>"
+                                            data-inst="<%= r.instrument_type %>">
+                                            <td class="test-id-col"><%= r._id.toString().substring(0,8).toUpperCase() %></td>
+                                            <td><%= r.instrument_id || "Unknown" %></td>
+                                            <td><%= r.serial_no %></td>
+                                            <td><%= dateStr %></td>
+                                            <td>
+                                                <% if (r.status === 'PASS') { %>
+                                                    <span class="status-badge status-pass">PASS</span>
+                                                <% } else { %>
+                                                    <span class="status-badge status-fail">FAIL</span>
+                                                <% } %>
+                                            </td>
+                                        </tr>
+                                    <% }) %>
+                                <% } else { %>
+                                    <tr>
+                                        <td colspan="5" style="text-align: center; color: var(--color-muted);">No historical reports found.</td>
+                                    </tr>
+                                <% } %>
+                            </tbody>
+                        </table>
+                        <div class="pagination">
+                            <button class="page-btn active">1</button>
+                            <button class="page-btn">2</button>
+                            <button class="page-btn">3</button>
+                            <button class="page-btn">Next &rarr;</button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/pages/history.js"></script>
+</body>
+
+</html>

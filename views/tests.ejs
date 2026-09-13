@@ -1,39 +1,32 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Test Procedures</title>
+    <title>Test Execution — NAWI R-76</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="/dashboard.css">
+    <link rel="stylesheet" href="/css/pages/tests.css">
 </head>
-
 <body>
-    <nav class="navbar">
-        <a href="/" class="navbar-brand">
-            <img src="/images/logo.jpg" alt="Bytebrigade Logo">
-            Bytebrigade
-        </a>
-        <div class="navbar-links">
-            <a href="/"><i class="fas fa-home"></i> Home</a>
-            <a href="/new-test"><i class="fas fa-play"></i> New Test</a>
-            <a href="/dashboard"><i class="fas fa-folder-open"></i> Dashboard</a>
-        </div>
-    </nav>
-    <div class="container">
-        <h2>Test Execution Phase</h2>
-        <p>Please follow the sequential test procedures below. Ensure environmental conditions remain stable throughout
-            testing.</p>
+    <div class="app-wrapper">
+        <%- include('partials/sidebar') %>
+        <div class="app-main">
+            <%- include('partials/header') %>
+            <div class="app-content">
+                <div class="container" style="max-width:100%; box-shadow:none; padding:0; margin:0; background:transparent;">
+        <!-- Dynamic Progress Bar — rendered by script.js -->
+        <div id="progress-wrapper" class="progress-wrapper" style="display:none;"></div>
 
-        <div id="testarea">
-            <div id="renderForm"></div>
-            <div id="renderForm2"></div>
-            <div id="renderForm3"></div>
+        <!-- Single Dynamic Test Container -->
+        <div id="test-container"></div>
+                </div><!-- /container -->
+            </div><!-- /app-content -->
+        </div><!-- /app-main -->
+    </div><!-- /app-wrapper -->
 
-        </div>
-    </div>
+    <script src="/r76engine.js"></script>
+    <script src="script.js"></script>
 </body>
-<script src="script.js"></script>
-
 </html>

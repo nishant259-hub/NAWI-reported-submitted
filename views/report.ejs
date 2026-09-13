@@ -4,122 +4,143 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Official Report Certificate</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <title>Report TP-<%= report._id.toString().substring(0,8).toUpperCase() %> - NAWI</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="/dashboard.css">
+    <link rel="stylesheet" href="/css/pages/report.css">
 </head>
 
 <body>
-    <nav class="navbar">
-        <a href="/" class="navbar-brand">
-            <img src="/images/logo.jpg" alt="Bytebrigade Logo">
-            Bytebrigade
-        </a>
-        <div class="navbar-links">
-            <a href="/"><i class="fas fa-home"></i> Home</a>
-            <a href="/new-test"><i class="fas fa-play"></i> New Test</a>
-            <a href="/dashboard"><i class="fas fa-folder-open"></i> Dashboard</a>
-        </div>
-    </nav>
-    <div class="container">
-        <center style="margin-bottom: 20px;">
-            <button class="btn btn-success" onclick="downloadPDF()"><i class="fas fa-file-pdf"></i> Download Official
-                Certificate</button>
-            <a href="/dashboard" class="btn btn-secondary" style="margin-left: 10px;"><i class="fas fa-folder-open"></i>
-                Back to Dashboard</a>
-        </center>
+    <div class="app-wrapper">
+        <%- include('partials/sidebar') %>
+        <div class="app-main">
+            <%- include('partials/header') %>
+            <div class="app-content">
+                <div class="report-page">
+                    
+                    <div class="report-card" id="printable-report">
+                        <div class="report-header">
+                            <h2>TEST RESULTS</h2>
+                            <div class="report-id">TP-<%= report._id.toString().substring(0,8).toUpperCase() %></div>
+                        </div>
 
-        <div id="report-content" class="certificate-wrapper">
-            <div class="certificate-inner">
-                <div class="cert-header">
-                    <h1>Certificate of Calibration</h1>
-                    <h3>Non-Automatic Weighing Instruments (NAWI)</h3>
-                </div>
+                        <div class="report-instrument">
+                            <h3>Instrument: <%= report.instrument_id || "Unknown" %></h3>
+                            <div class="inst-details">
+                                <span><strong>Class:</strong> <%= (report.instrument_data && report.instrument_data.Class_value) ? report.instrument_data.Class_value : "N/A" %></span>
+                                <span><strong>Max:</strong> <%= (report.instrument_data && report.instrument_data.capacity) ? report.instrument_data.capacity : "N/A" %> kg</span>
+                                <span><strong>e:</strong> <%= (report.instrument_data && report.instrument_data.e_value) ? report.instrument_data.e_value : "N/A" %> g</span>
+                            </div>
+                        </div>
 
-                <div class="cert-grid">
-                    <div class="cert-section" id="instrument-details">
-                        <!-- Injected by JS -->
-                    </div>
-                    <div class="cert-section" id="env-details">
-                        <!-- Injected by JS -->
-                    </div>
-                </div>
+                        <div class="test-list-header">TEST RESULTS</div>
 
-                <div class="cert-tables">
-                    <div class="cert-table-wrapper full-width">
-                        <h4>1. Weighing Performance Test</h4>
-                        <table border="1" style="width: 100%; text-align: left;">
-                            <thead>
-                                <tr>
-                                    <th>Applied Load</th>
-                                    <th>Indication (Up)</th>
-                                    <th>Indication (Down)</th>
-                                    <th>Error (Up)</th>
-                                    <th>Error (Down)</th>
-                                    <th>Limit</th>
-                                    <th>Result</th>
-                                </tr>
-                            </thead>
-                            <tbody id="test1-table-body"></tbody>
-                        </table>
-                    </div>
+                        <% if (testStatus.visual) { %>
+                            <div class="test-row">
+                                <div class="test-info">
+                                    <h4>Visual Inspection</h4>
+                                    <p>Markings and conditions verified</p>
+                                </div>
+                                <div class="test-status <%= testStatus.visual === 'PASS' ? 'pass-text' : 'fail-text' %>">
+                                    <i class="fas <%= testStatus.visual === 'PASS' ? 'fa-check' : 'fa-times' %>"></i> <%= testStatus.visual %>
+                                </div>
+                            </div>
+                        <% } %>
 
-                    <div class="cert-table-wrapper">
-                        <h4>2. Repeatability Test</h4>
-                        <table border="1" style="width: 100%; text-align: left;">
-                            <thead>
-                                <tr>
-                                    <th>Reading</th>
-                                    <th>Result</th>
-                                </tr>
-                            </thead>
-                            <tbody id="test2-table-body"></tbody>
-                        </table>
-                    </div>
+                        <% if (testStatus.weighing) { %>
+                            <div class="test-row">
+                                <div class="test-info">
+                                    <h4>Weighing Performance</h4>
+                                    <p>Load observations against MPE</p>
+                                </div>
+                                <div class="test-status <%= testStatus.weighing === 'PASS' ? 'pass-text' : 'fail-text' %>">
+                                    <i class="fas <%= testStatus.weighing === 'PASS' ? 'fa-check' : 'fa-times' %>"></i> <%= testStatus.weighing %>
+                                </div>
+                            </div>
+                        <% } %>
 
-                    <div class="cert-table-wrapper">
-                        <h4>3. Eccentricity Test</h4>
-                        <table border="1" style="width: 100%; text-align: left;">
-                            <thead>
-                                <tr>
-                                    <th>Position</th>
-                                    <th>Reading</th>
-                                </tr>
-                            </thead>
-                            <tbody id="test3-table-body"></tbody>
-                        </table>
-                    </div>
-                </div>
+                        <% if (testStatus.repeatability) { %>
+                            <div class="test-row">
+                                <div class="test-info">
+                                    <h4>Repeatability</h4>
+                                    <p>Variation within permissible limits</p>
+                                </div>
+                                <div class="test-status <%= testStatus.repeatability === 'PASS' ? 'pass-text' : 'fail-text' %>">
+                                    <i class="fas <%= testStatus.repeatability === 'PASS' ? 'fa-check' : 'fa-times' %>"></i> <%= testStatus.repeatability %>
+                                </div>
+                            </div>
+                        <% } %>
 
-                <!-- Automated Diagnostic Summary -->
-                <div id="ai-auditor-section" class="formal-diagnostic-box">
-                    <h4>Automated Diagnostic Summary</h4>
-                    <div id="ai-loading" class="diagnostic-loading">
-                        <i class="fas fa-circle-notch fa-spin"></i> Processing system data...
-                    </div>
-                    <div id="ai-content" style="display: none;" class="diagnostic-content">
-                        <p><strong>Performance Verdict:</strong> <span id="ai-verdict"></span></p>
-                        <p><strong>Maintenance Forecast:</strong> <span id="ai-prediction"></span></p>
-                        <p><strong>Recommended Action:</strong> <span id="ai-action"></span></p>
-                    </div>
-                </div>
+                        <% if (testStatus.eccentricity) { %>
+                            <div class="test-row">
+                                <div class="test-info">
+                                    <h4>Eccentricity</h4>
+                                    <p>Off-center loading errors</p>
+                                </div>
+                                <div class="test-status <%= testStatus.eccentricity === 'PASS' ? 'pass-text' : 'fail-text' %>">
+                                    <i class="fas <%= testStatus.eccentricity === 'PASS' ? 'fa-check' : 'fa-times' %>"></i> <%= testStatus.eccentricity %>
+                                </div>
+                            </div>
+                        <% } %>
 
-                <div class="cert-footer">
-                    <div class="seal">
-                        Official<br>Calibrated<br>Seal
-                    </div>
-                    <div class="signature-block">
-                        <div class="signature-line">Authorized Signature</div>
-                    </div>
-                    <div class="signature-block">
-                        <div class="signature-line">Date of Issue</div>
+                        <% if (testStatus.zero) { %>
+                            <div class="test-row">
+                                <div class="test-info">
+                                    <h4>Zero Test</h4>
+                                    <p>Zero-setting accuracy</p>
+                                </div>
+                                <div class="test-status <%= testStatus.zero === 'PASS' ? 'pass-text' : 'fail-text' %>">
+                                    <i class="fas <%= testStatus.zero === 'PASS' ? 'fa-check' : 'fa-times' %>"></i> <%= testStatus.zero %>
+                                </div>
+                            </div>
+                        <% } %>
+
+                        <% if (testStatus.tare) { %>
+                            <div class="test-row">
+                                <div class="test-info">
+                                    <h4>Tare Accuracy</h4>
+                                    <p>Net weight accuracy</p>
+                                </div>
+                                <div class="test-status <%= testStatus.tare === 'PASS' ? 'pass-text' : 'fail-text' %>">
+                                    <i class="fas <%= testStatus.tare === 'PASS' ? 'fa-check' : 'fa-times' %>"></i> <%= testStatus.tare %>
+                                </div>
+                            </div>
+                        <% } %>
+
+                        <% if (testStatus.tilt) { %>
+                            <div class="test-row">
+                                <div class="test-info">
+                                    <h4>Tilt Test</h4>
+                                    <p>Leveling variation</p>
+                                </div>
+                                <div class="test-status <%= testStatus.tilt === 'PASS' ? 'pass-text' : 'fail-text' %>">
+                                    <i class="fas <%= testStatus.tilt === 'PASS' ? 'fa-check' : 'fa-times' %>"></i> <%= testStatus.tilt %>
+                                </div>
+                            </div>
+                        <% } %>
+
+                        <div class="overall-result">
+                            <h4>OVERALL RESULT</h4>
+                            <div class="result-badge <%= overallPass ? 'result-pass' : 'result-fail' %>">
+                                <%= overallPass ? '✓ PASS' : '❌ FAIL' %>
+                            </div>
+                            <div class="result-stats">
+                                <div><%= passCount %> / <%= totalTests %> tests passed</div>
+                                <% if (failCount > 0) { %>
+                                    <div style="color: #e74c3c; margin-top: 4px;"><%= failCount %> test(s) failed</div>
+                                <% } %>
+                            </div>
+                        </div>
+
+                        <div class="action-footer">
+                            <a href="/report-detailed?id=<%= report._id %>"><button class="btn btn-secondary"><i class="fas fa-list"></i> View Detailed Results</button></a>
+                            <button class="btn" style="background:#0E7C86;" onclick="window.print()"><i class="fas fa-file-pdf"></i> Generate Report</button>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </body>
-<script src="result.js"></script>
-
 </html>

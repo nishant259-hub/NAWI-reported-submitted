@@ -1,0 +1,81 @@
+<header class="app-header">
+    <div class="header-left">
+        <button id="mobile-menu-btn" class="icon-btn mobile-only" style="display: none;" onclick="toggleSidebar()">
+            <i class="fas fa-bars"></i>
+        </button>
+    </div>
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.querySelector('.app-sidebar');
+            sidebar.classList.toggle('open');
+            let backdrop = document.getElementById('sidebar-backdrop');
+            if (!backdrop) {
+                backdrop = document.createElement('div');
+                backdrop.id = 'sidebar-backdrop';
+                backdrop.className = 'sidebar-backdrop';
+                document.body.appendChild(backdrop);
+                backdrop.onclick = toggleSidebar;
+            }
+            backdrop.classList.toggle('show');
+        }
+    </script>
+    <style>
+        .user-profile-dropdown {
+            position: relative;
+            display: inline-block;
+            cursor: pointer;
+        }
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: 100%;
+            background-color: #fff;
+            min-width: 140px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            z-index: 999;
+            border: 1px solid #e1e8ed;
+        }
+        /* Invisible bridge so mouse doesn't lose hover */
+        .user-profile-dropdown::after {
+            content: '';
+            position: absolute;
+            bottom: -15px;
+            left: 0;
+            width: 100%;
+            height: 15px;
+            background: transparent;
+        }
+        .dropdown-content a {
+            color: #e74c3c;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            transition: background 0.2s;
+        }
+        .dropdown-content a i {
+            margin-right: 8px;
+        }
+        .dropdown-content a:hover {
+            background-color: #fcf0f0;
+        }
+        .user-profile-dropdown:hover .dropdown-content {
+            display: block;
+        }
+    </style>
+    <div class="header-right">
+        <button class="icon-btn"><i class="far fa-bell"></i><span class="badge-dot"></span></button>
+        <div class="user-profile-dropdown">
+            <div class="user-profile">
+                <div class="avatar"><i class="fas fa-user"></i></div>
+                <span class="user-name">Nishant <i class="fas fa-caret-down" style="font-size: 12px; margin-left: 4px; color: #8ba3b8;"></i></span>
+            </div>
+            <div class="dropdown-content">
+                <a href="/" onclick="localStorage.removeItem('InstrumentData');"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            </div>
+        </div>
+    </div>
+</header>

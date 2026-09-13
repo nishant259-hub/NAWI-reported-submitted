@@ -1,0 +1,197 @@
+/* history.css */
+.history-page {
+    font-family: 'IBM Plex Sans', sans-serif;
+    color: var(--color-ink);
+}
+.header-section {
+    margin-bottom: 24px;
+}
+.header-section h1 {
+    font-family: var(--font-display);
+    font-size: 28px;
+    color: var(--color-teal-dark);
+    margin: 0 0 16px 0;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Search Bar */
+.search-container {
+    margin-bottom: 32px;
+}
+.search-container label {
+    display: block;
+    font-size: 14px;
+    color: var(--color-muted);
+    margin-bottom: 8px;
+    font-weight: 600;
+}
+.search-box {
+    position: relative;
+    max-width: 600px;
+}
+.search-box i {
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--color-muted);
+}
+.search-box input {
+    width: 100%;
+    padding: 14px 14px 14px 44px;
+    border: 1px solid var(--color-line);
+    border-radius: 8px;
+    font-size: 16px;
+    background: #fff;
+    transition: all 0.2s;
+}
+.search-box input:focus {
+    outline: none;
+    border-color: var(--color-teal);
+    box-shadow: 0 0 0 3px rgba(14, 124, 134, 0.1);
+}
+
+/* Filters */
+.filters-section {
+    background: #f8faff;
+    border: 1px solid #dde8f5;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 32px;
+}
+.filters-section h3 {
+    margin: 0 0 16px 0;
+    font-size: 16px;
+    color: var(--color-teal-dark);
+}
+.filters-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 16px;
+}
+.filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+.filter-group label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--color-muted);
+}
+.filter-group select, .filter-group input {
+    padding: 10px;
+    border: 1px solid var(--color-line);
+    border-radius: 6px;
+    font-size: 14px;
+    background: #fff;
+    font-family: inherit;
+}
+
+/* Data Table */
+.table-container {
+    background: #fff;
+    border: 1px solid var(--color-line);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+}
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+thead {
+    background: #f0f6ff;
+    border-bottom: 2px solid #dde8f5;
+}
+th {
+    text-align: left;
+    padding: 16px 20px;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--color-teal-dark);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+td {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--color-line-soft);
+    font-size: 14px;
+    color: var(--color-ink);
+}
+tbody tr {
+    transition: background 0.2s;
+    cursor: pointer;
+}
+tbody tr:hover {
+    background: #fcfcfc;
+}
+tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.test-id-col {
+    font-family: monospace;
+    font-weight: 600;
+    color: var(--color-teal);
+}
+.status-badge {
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+    display: inline-block;
+}
+.status-pass { background: #e6f6f5; color: #0E7C86; }
+.status-fail { background: #fdf3f2; color: #e74c3c; }
+
+/* Pagination placeholder */
+.pagination {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding: 16px 20px;
+    gap: 8px;
+    border-top: 1px solid var(--color-line-soft);
+    background: #fff;
+}
+.page-btn {
+    background: #fff;
+    border: 1px solid var(--color-line);
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: pointer;
+    color: var(--color-muted);
+    transition: all 0.2s;
+}
+.page-btn:hover {
+    border-color: var(--color-teal);
+    color: var(--color-teal);
+}
+.page-btn.active {
+    background: var(--color-teal);
+    color: #fff;
+    border-color: var(--color-teal);
+}
+
+/* =========================================================================
+   MOBILE RESPONSIVE OVERRIDES (HISTORY)
+   ========================================================================= */
+@media screen and (max-width: 768px) {
+    .filters-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .table-container {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .filters-grid {
+        grid-template-columns: 1fr;
+    }
+}

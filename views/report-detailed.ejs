@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detailed Analysis - TP-<%= report._id.toString().substring(0,8).toUpperCase() %></title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="/dashboard.css">
+    <link rel="stylesheet" href="/css/pages/report.css">
+</head>
+
+<body>
+    <div class="app-wrapper">
+        <%- include('partials/sidebar') %>
+        <div class="app-main">
+            <%- include('partials/header') %>
+            <div class="app-content">
+                <div class="detailed-page">
+
+                    <div class="header-bar">
+                        <h1>Detailed Test Analysis</h1>
+                        <div style="display: flex; gap: 12px;">
+                            <button class="btn" style="background:#0E7C86;" onclick="window.print()"><i class="fas fa-file-pdf"></i> Save as PDF</button>
+                            <a href="/report?id=<%= report._id %>"><button class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Back to Summary</button></a>
+                        </div>
+                    </div>
+
+                    <!-- Weighing Performance -->
+                    <% if (report.form1_results) { %>
+                        <div class="table-card">
+                            <h3><i class="fas fa-weight"></i> Weighing Performance</h3>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Load (kg)</th>
+                                        <th>Direction</th>
+                                        <th>Reading (kg)</th>
+                                        <th>Error (kg)</th>
+                                        <th>Expected MPE (kg)</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% Object.values(report.form1_results).forEach(row => { 
+                                        if(row.load_g !== undefined) { 
+                                            const ascFail = row.asc_status === 'FAIL';
+                                            const descFail = row.desc_status === 'FAIL';
+                                    %>
+                                        <tr class="<%= ascFail ? 'highlight-fail' : '' %>">
+                                            <td rowspan="2" style="border-bottom: 2px solid var(--color-line); font-weight:700;"><%= row.load_g %></td>
+                                            <td>Ascending</td>
+                                            <td><%= row.asc_reading %></td>
+                                            <td class="err-text <%= ascFail ? 'fail-text' : '' %>"><%= row.asc_error %></td>
+                                            <td class="mpe-text">±<%= row.limit %></td>
+                                            <td>
+                                                <span class="<%= ascFail ? 'fail-text' : 'pass-text' %>"><%= row.asc_status %></span>
+                                                <% if(ascFail) { %><br><span class="reason-box">Error exceeds MPE</span><% } %>
+                                            </td>
+                                        </tr>
+                                        <tr class="<%= descFail ? 'highlight-fail' : '' %>" style="border-bottom: 2px solid var(--color-line);">
+                                            <td>Descending</td>
+                                            <td><%= row.desc_reading %></td>
+                                            <td class="err-text <%= descFail ? 'fail-text' : '' %>"><%= row.desc_error %></td>
+                                            <td class="mpe-text">±<%= row.limit %></td>
+                                            <td>
+                                                <span class="<%= descFail ? 'fail-text' : 'pass-text' %>"><%= row.desc_status %></span>
+                                                <% if(descFail) { %><br><span class="reason-box">Error exceeds MPE</span><% } %>
+                                            </td>
+                                        </tr>
+                                    <% }}) %>
+                                </tbody>
+                            </table>
+                        </div>
+                    <% } %>
+
+                    <!-- Repeatability -->
+                    <% if (report.form2_results) { %>
+                        <% const rep = report.form2_results; const rFail = rep.Repeatability === 'FAIL'; %>
+                        <div class="table-card">
+                            <h3><i class="fas fa-sync-alt"></i> Repeatability</h3>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Test Load (kg)</th>
+                                        <th>Max Reading (kg)</th>
+                                        <th>Min Reading (kg)</th>
+                                        <th>Max Difference (kg)</th>
+                                        <th>Expected MPE (kg)</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="<%= rFail ? 'highlight-fail' : '' %>">
+                                        <td><%= rep.testLoad %></td>
+                                        <td><%= rep.max %></td>
+                                        <td><%= rep.min %></td>
+                                        <td class="err-text <%= rFail ? 'fail-text' : '' %>"><%= rep.range %></td>
+                                        <td class="mpe-text"><%= rep.limit %></td>
+                                        <td>
+                                            <span class="<%= rFail ? 'fail-text' : 'pass-text' %>"><%= rep.Repeatability %></span>
+                                            <% if(rFail) { %><br><span class="reason-box">Variation exceeds MPE</span><% } %>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    <% } %>
+
+                    <!-- Eccentricity -->
+                    <% if (report.form3_results) { %>
+                        <div class="table-card">
+                            <h3><i class="fas fa-crosshairs"></i> Eccentricity</h3>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Position</th>
+                                        <th>Test Load (kg)</th>
+                                        <th>Reading (kg)</th>
+                                        <th>Error (kg)</th>
+                                        <th>Expected MPE (kg)</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% if (report.form3_results.details) { Object.entries(report.form3_results.details).forEach(([pos, data]) => { 
+                                        const eFail = data.result === 'FAIL';
+                                    %>
+                                        <tr class="<%= eFail ? 'highlight-fail' : '' %>">
+                                            <td style="text-transform: capitalize;"><%= pos %></td>
+                                            <td><%= data.appliedLoad %></td>
+                                            <td><%= data.indication %></td>
+                                            <td class="err-text <%= eFail ? 'fail-text' : '' %>"><%= data.error %></td>
+                                            <td class="mpe-text">±<%= data.limit %></td>
+                                            <td>
+                                                <span class="<%= eFail ? 'fail-text' : 'pass-text' %>"><%= data.result %></span>
+                                                <% if(eFail) { %><br><span class="reason-box">Positional error exceeds MPE</span><% } %>
+                                            </td>
+                                        </tr>
+                                    <% })} %>
+                                </tbody>
+                            </table>
+                        </div>
+                    <% } %>
+
+                    <!-- Zero, Tare, Tilt -->
+                    <% 
+                    const simpleTests = [
+                        { name: "Zero-Setting", icon: "bullseye", data: report.form_zero_results, resKey: "ZeroSetting" },
+                        { name: "Tare Accuracy", icon: "balance-scale", data: report.form_tare_results, resKey: "TareAccuracy" },
+                        { name: "Tilt Test", icon: "arrows-alt", data: report.form_tilt_results, resKey: "TiltTest" }
+                    ];
+                    
+                    simpleTests.forEach(test => {
+                        if (test.data) {
+                            const fail = test.data[test.resKey] === 'FAIL';
+                    %>
+                        <div class="table-card">
+                            <h3><i class="fas fa-<%= test.icon %>"></i> <%= test.name %></h3>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Parameter</th>
+                                        <th>Error (kg)</th>
+                                        <th>Limit / Expected (kg)</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="<%= fail ? 'highlight-fail' : '' %>">
+                                        <td>Measured Variation</td>
+                                        <td class="err-text <%= fail ? 'fail-text' : '' %>"><%= test.data.error !== undefined ? test.data.error : test.data.val %></td>
+                                        <td class="mpe-text">±<%= test.data.limit !== undefined ? test.data.limit : test.data.mpe %></td>
+                                        <td>
+                                            <span class="<%= fail ? 'fail-text' : 'pass-text' %>"><%= test.data[test.resKey] %></span>
+                                            <% if(fail) { %><br><span class="reason-box">Exceeds permissible limits</span><% } %>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    <% }}); %>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

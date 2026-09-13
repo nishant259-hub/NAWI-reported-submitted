@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In - NAWI Reported</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/pages/login.css">
+</head>
+<body>
+
+    <a href="/" class="back-link"><i class="fas fa-arrow-left"></i> Back to Home</a>
+
+    <div class="auth-container">
+        <div class="auth-brand">
+            <i class="fas fa-balance-scale-right"></i>
+        </div>
+        <h2 class="auth-title">Welcome Back</h2>
+        <p class="auth-subtitle">Sign in to manage your NAWI testing workflow</p>
+        
+        <div class="demo-box">
+            <h4><i class="fas fa-info-circle"></i> Demo Credentials</h4>
+            <p><strong>Email:</strong> admin@bytebrigade.com</p>
+            <p><strong>Password:</strong> sih2026demo</p>
+        </div>
+
+        <form action="/home" method="GET">
+            <div class="form-group">
+                <label>Email Address</label>
+                <input type="email" name="email" value="admin@bytebrigade.com" required>
+                <i class="fas fa-envelope input-icon"></i>
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" name="password" value="sih2026demo" required>
+                <i class="fas fa-lock input-icon"></i>
+            </div>
+            <button type="submit" class="btn-auth">Sign In</button>
+        </form>
+        
+        <div class="auth-footer">
+            <i class="fas fa-shield-alt"></i> Secure SIH Prototype Demo
+        </div>
+    </div>
+</body>
+</html>
