@@ -224,6 +224,33 @@ app.get("/report-detailed", async (req, res) => {
     }
 });
 
+app.get("/certificate", async (req, res) => {
+    try {
+        if (!req.query.id) return res.redirect("/history");
+        const report = await Report.findById(req.query.id).lean();
+        if (!report) {
+            return res.status(404).send("Report not found");
+        }
+        
+        let isPass = true;
+        const results = [report.form0_results, report.form1_results, report.form2_results, report.form3_results, report.form_zero_results, report.form_tare_results, report.form_tilt_results];
+        for (let res of results) {
+            if (res) {
+                const str = JSON.stringify(res);
+                if (str.includes('"FAIL"')) {
+                    isPass = false;
+                    break;
+                }
+            }
+        }
+        const status = isPass ? "PASS" : "FAIL";
+        
+        res.render("certificate", { report, status });
+    } catch (err) {
+        res.status(500).send("Error loading certificate: " + err.message);
+    }
+});
+
 app.listen(PORT, () => {
     console.log(`🚀 Server is running on http://localhost:${PORT}`);
 });

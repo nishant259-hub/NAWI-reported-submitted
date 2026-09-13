@@ -135,7 +135,7 @@
 
                         <div class="action-footer">
                             <a href="/report-detailed?id=<%= report._id %>"><button class="btn btn-secondary"><i class="fas fa-list"></i> View Detailed Results</button></a>
-                            <button class="btn" style="background:#0E7C86;" onclick="window.print()"><i class="fas fa-file-pdf"></i> Generate Report</button>
+                            <button class="btn" style="background:#0E7C86;" onclick="window.open('/certificate?id=<%= report._id %>', '_blank')"><i class="fas fa-file-pdf"></i> Generate Report</button>
                         </div>
                     </div>
                 </div>

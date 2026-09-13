@@ -22,7 +22,7 @@
                     <div class="header-bar">
                         <h1>Detailed Test Analysis</h1>
                         <div style="display: flex; gap: 12px;">
-                            <button class="btn" style="background:#0E7C86;" onclick="window.print()"><i class="fas fa-file-pdf"></i> Save as PDF</button>
+                            <button class="btn" style="background:#0E7C86;" onclick="window.open('/certificate?id=<%= report._id %>', '_blank')"><i class="fas fa-file-pdf"></i> Save as PDF</button>
                             <a href="/report?id=<%= report._id %>"><button class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Back to Summary</button></a>
                         </div>
                     </div>
