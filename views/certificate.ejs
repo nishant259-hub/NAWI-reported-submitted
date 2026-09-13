@@ -1,139 +1,848 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NAWI Test Certificate - <%= report.instrument_id %></title>
+    <title>NAWI Test Certificate - <%= report.instrument_id %>
+    </title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Source+Serif+4:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="/style.css">
     <style>
-        /* Force background printing and remove any margins */
-        @media print {
-            body { background: #fff !important; margin: 0; padding: 0; }
-            .print-button { display: none !important; }
+        :root {
+            --ink: #1a2332;
+            --ink-soft: #3d4a5c;
+            --line: #c9ced6;
+            --line-strong: #8f98a3;
+            --brand: #0b4f5c;
+            --brand-deep: #083a44;
+            --gold: #a9822f;
+            --pass: #146c43;
+            --fail: #b3261e;
+            --paper: #fdfcf9;
+            --band: #f4f2ec;
         }
-        body { background: #E5E9EC; display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; margin: 0; padding: 40px 20px; }
-        .print-button { position: fixed; top: 20px; right: 20px; background: #0E7C86; color: white; border: none; padding: 12px 24px; border-radius: 6px; font-weight: 600; cursor: pointer; z-index: 100; display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
-        .print-button:hover { background: #0A5C64; }
-        /* A4 Size paper wrapper for screen preview */
-        .a4-preview { width: 210mm; min-height: 297mm; background: white; box-shadow: 0 10px 40px rgba(0,0,0,0.15); margin: 0 auto; box-sizing: border-box; }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        @media print {
+            body {
+                background: #fff !important;
+                margin: 0;
+                padding: 0;
+            }
+
+            .print-button,
+            .screen-only {
+                display: none !important;
+            }
+
+            .a4-preview {
+                box-shadow: none !important;
+                width: auto;
+                min-height: 0;
+            }
+
+            /* repeat decorative frame + watermark on every printed page */
+            .cert-frame,
+            .watermark {
+                position: fixed !important;
+            }
+
+            .cert-table-wrapper,
+            .cert-grid,
+            .status-ribbon,
+            .summary-strip {
+                break-inside: avoid;
+            }
+
+            .cert-footer {
+                break-inside: avoid;
+            }
+        }
+
+        body {
+            background: #dfe3e8;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 40px 20px;
+            font-family: 'Inter', -apple-system, sans-serif;
+        }
+
+        .print-button {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--brand);
+            color: #fff;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            cursor: pointer;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
+            letter-spacing: .02em;
+            transition: background .15s ease;
+        }
+
+        .print-button:hover {
+            background: var(--brand-deep);
+        }
+
+        .a4-preview {
+            width: 210mm;
+            min-height: 297mm;
+            background: var(--paper);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.18);
+            margin: 0 auto 24px;
+            box-sizing: border-box;
+            position: relative;
+            overflow: visible;
+            font-family: 'Source Serif 4', Georgia, serif;
+            color: var(--ink);
+        }
+
+        /* Decorative frame */
+        .cert-frame {
+            position: absolute;
+            inset: 10mm;
+            border: 2px solid var(--brand);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .cert-frame::after {
+            content: "";
+            position: absolute;
+            inset: 4px;
+            border: 1px solid var(--gold);
+        }
+
+        .certificate-inner {
+            position: relative;
+            padding: 22mm 18mm 20mm;
+            min-height: 275mm;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Watermark */
+        .watermark {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-32deg);
+            font-family: 'Playfair Display', serif;
+            font-size: 88px;
+            font-weight: 700;
+            color: rgba(11, 79, 92, 0.045);
+            letter-spacing: 6px;
+            white-space: nowrap;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .cert-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 3px double var(--brand);
+            padding-bottom: 14px;
+            margin-bottom: 6px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .cert-header .brand-mark {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .cert-header .emblem {
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--brand), var(--brand-deep));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 22px;
+            flex-shrink: 0;
+            box-shadow: 0 0 0 3px #fff, 0 0 0 4px var(--gold);
+        }
+
+        .cert-header .org-name {
+            font-family: 'Inter', sans-serif;
+            font-size: 10.5px;
+            letter-spacing: .14em;
+            text-transform: uppercase;
+            color: var(--ink-soft);
+            font-weight: 600;
+        }
+
+        .cert-header h1 {
+            font-family: 'Playfair Display', serif;
+            margin: 2px 0 0;
+            font-size: 24px;
+            color: var(--brand-deep);
+            font-weight: 700;
+        }
+
+        .cert-header h3 {
+            margin: 4px 0 0;
+            font-size: 11.5px;
+            font-weight: 600;
+            font-family: 'Inter', sans-serif;
+            letter-spacing: .03em;
+            color: var(--ink-soft);
+        }
+
+        .cert-id-box {
+            text-align: right;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .cert-id-box .label {
+            font-size: 8.5px;
+            letter-spacing: .12em;
+            text-transform: uppercase;
+            color: var(--line-strong);
+        }
+
+        .cert-id-box .value {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--brand-deep);
+            font-family: 'Inter', monospace;
+        }
+
+        .status-ribbon {
+            margin: 16px 0 14px;
+            padding: 10px 18px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--band);
+            border-left: 4px solid var(--gold);
+            font-family: 'Inter', sans-serif;
+            position: relative;
+            z-index: 1;
+        }
+
+        .status-ribbon .overall {
+            font-size: 11px;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+            color: var(--ink-soft);
+            font-weight: 600;
+        }
+
+        .status-pill {
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: .06em;
+            padding: 4px 14px;
+            border-radius: 3px;
+            color: #fff;
+        }
+
+        .status-pill.pass {
+            background: var(--pass);
+        }
+
+        .status-pill.fail {
+            background: var(--fail);
+        }
+
+        /* Test summary chip strip */
+        .summary-strip {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 16px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .summary-chip {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-family: 'Inter', sans-serif;
+            font-size: 10px;
+            font-weight: 600;
+            padding: 5px 10px;
+            border-radius: 20px;
+            border: 1px solid var(--line);
+            background: #fff;
+            color: var(--ink-soft);
+            letter-spacing: .01em;
+        }
+
+        .summary-chip .dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .summary-chip .dot.pass {
+            background: var(--pass);
+        }
+
+        .summary-chip .dot.fail {
+            background: var(--fail);
+        }
+
+        .cert-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0;
+            border: 1px solid var(--line);
+            position: relative;
+            z-index: 1;
+            margin-bottom: 16px;
+        }
+
+        .cert-section {
+            padding: 14px 18px;
+        }
+
+        .cert-grid .cert-section:first-child {
+            border-right: 1px solid var(--line);
+        }
+
+        .cert-section h4 {
+            margin: 0 0 10px;
+            font-family: 'Inter', sans-serif;
+            font-size: 10px;
+            letter-spacing: .1em;
+            text-transform: uppercase;
+            color: var(--brand);
+            font-weight: 700;
+            border-bottom: 1px solid var(--line);
+            padding-bottom: 6px;
+        }
+
+        .cert-section p {
+            margin: 0 0 6px;
+            font-size: 12.5px;
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .cert-section p strong {
+            font-weight: 600;
+            color: var(--ink-soft);
+            font-family: 'Inter', sans-serif;
+            font-size: 10.5px;
+            text-transform: uppercase;
+            letter-spacing: .03em;
+        }
+
+        .cert-section p .val {
+            font-weight: 600;
+            color: var(--ink);
+            text-align: right;
+        }
+
+        .cert-meta-row {
+            display: flex;
+            justify-content: space-between;
+            font-family: 'Inter', sans-serif;
+            font-size: 11px;
+            color: var(--ink-soft);
+            margin-bottom: 18px;
+            position: relative;
+            z-index: 1;
+            border-bottom: 1px solid var(--line);
+            padding-bottom: 10px;
+        }
+
+        .cert-meta-row div strong {
+            color: var(--ink);
+            font-weight: 700;
+        }
+
+        .cert-tables {
+            position: relative;
+            z-index: 1;
+            flex: 1;
+        }
+
+        /* Full-width tables stack; compact tables flow two-per-row */
+        .table-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-bottom: 0;
+        }
+
+        .table-row .cert-table-wrapper {
+            flex: 1 1 300px;
+            min-width: 0;
+        }
+
+        .cert-table-wrapper {
+            margin-bottom: 18px;
+        }
+
+        .cert-table-wrapper.full-width {
+            width: 100%;
+        }
+
+        .cert-table-wrapper h4 {
+            font-family: 'Inter', sans-serif;
+            font-size: 10.5px;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+            color: var(--brand-deep);
+            font-weight: 700;
+            margin: 0 0 8px;
+            padding-left: 10px;
+            border-left: 3px solid var(--gold);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .cert-table-wrapper h4 .count-tag {
+            font-size: 9px;
+            font-weight: 600;
+            color: var(--line-strong);
+            text-transform: none;
+            letter-spacing: 0;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            font-family: 'Inter', sans-serif;
+            font-size: 11px;
+        }
+
+        table th {
+            background: var(--brand-deep);
+            color: #fff;
+            font-weight: 600;
+            padding: 7px 8px;
+            text-align: center;
+            letter-spacing: .03em;
+            font-size: 10px;
+            text-transform: uppercase;
+            border: 1px solid var(--brand-deep);
+        }
+
+        table td {
+            padding: 6px 8px;
+            text-align: center;
+            border: 1px solid var(--line);
+            color: var(--ink);
+        }
+
+        table tr:nth-child(even) td {
+            background: #f8f9f7;
+        }
+
+        .status-tag {
+            font-weight: 700;
+            font-size: 10px;
+            letter-spacing: .02em;
+            padding: 2px 8px;
+            border-radius: 2px;
+            display: inline-block;
+        }
+
+        .status-tag.pass {
+            color: var(--pass);
+        }
+
+        .status-tag.fail {
+            color: var(--fail);
+        }
+
+        .cert-footer {
+            margin-top: 24px;
+            padding-top: 20px;
+            border-top: 1px solid var(--line);
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            position: relative;
+            z-index: 1;
+        }
+
+        .seal {
+            width: 78px;
+            height: 78px;
+            border-radius: 50%;
+            border: 2px solid var(--gold);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            font-family: 'Inter', sans-serif;
+            color: var(--brand-deep);
+            font-weight: 700;
+            letter-spacing: .04em;
+            background: radial-gradient(circle, #fff 60%, var(--band) 100%);
+            box-shadow: 0 0 0 1px var(--brand) inset;
+        }
+
+        .seal div {
+            font-size: 8px;
+            line-height: 1.5;
+        }
+
+        .footer-note {
+            font-family: 'Inter', sans-serif;
+            font-size: 9px;
+            color: var(--line-strong);
+            max-width: 260px;
+            line-height: 1.5;
+        }
+
+        .signature-block {
+            text-align: center;
+        }
+
+        .signature-line {
+            width: 180px;
+            border-top: 1px solid var(--ink);
+            padding-top: 6px;
+            font-family: 'Inter', sans-serif;
+            font-size: 10.5px;
+            font-weight: 600;
+            color: var(--ink-soft);
+        }
+
+        .signature-block .designation {
+            font-size: 9px;
+            color: var(--line-strong);
+            margin-top: 2px;
+            font-weight: 400;
+        }
     </style>
 </head>
+
 <body>
-    <button class="print-button" onclick="window.print()"><i class="fas fa-print"></i> Print Official Certificate</button>
+    <button class="print-button screen-only" onclick="window.print()"><i class="fas fa-print"></i> Print Official
+        Certificate</button>
 
-    <div class="a4-preview certificate-wrapper">
-        <div class="certificate-inner" style="min-height: 275mm;">
-            <div class="cert-header">
-                <h1>Certificate of Calibration</h1>
-                <h3>OIML R-76 Compliant Non-Automatic Weighing Instrument Test</h3>
-            </div>
+    <% /* ---- Pre-compute overall pass/fail per test section for the summary strip ---- */ 
+       const summary=[]; 
+       if (report.form1_results) { const rows=Object.values(report.form1_results).filter(r=> r.load_g !== undefined);
+        const ok = rows.length > 0 && rows.every(r => r.asc_status === 'PASS' && r.desc_status === 'PASS');
+        summary.push({ name: 'Weighing Performance', pass: ok });
+        }
+        if (report.form2_results) {
+        summary.push({ name: 'Repeatability', pass: report.form2_results.Repeatability === 'PASS' });
+        }
+        if (report.form3_results && report.form3_results.details) {
+        const vals = Object.values(report.form3_results.details);
+        summary.push({ name: 'Eccentricity', pass: vals.length > 0 && vals.every(d => d.result === 'PASS') });
+        }
+        if (report.form0_results && report.form0_results.items) {
+        const vals = Object.values(report.form0_results.items);
+        summary.push({ name: 'Visual Inspection', pass: vals.length > 0 && vals.every(v => v === 'on') });
+        }
+        const simpleTests = [
+        { name: 'Zero-Setting', data: report.form_zero_results, resKey: 'ZeroSetting' },
+        { name: 'Tare Accuracy', data: report.form_tare_results, resKey: 'TareAccuracy' },
+        { name: 'Tilt Test', data: report.form_tilt_results, resKey: 'TiltTest' }
+        ];
+        simpleTests.forEach(t => {
+        if (t.data) summary.push({ name: t.name, pass: t.data[t.resKey] === 'PASS' });
+        });
+        %>
 
-            <div class="cert-grid">
-                <div class="cert-section">
-                    <h4>Instrument Details</h4>
-                    <p><strong>Type:</strong> <%= report.instrument_data?.instrument_type || "N/A" %></p>
-                    <p><strong>Manufacturer:</strong> <%= report.instrument_data?.manufacturer || "N/A" %></p>
-                    <p><strong>Model:</strong> <%= report.instrument_data?.model || "N/A" %></p>
-                    <p><strong>Serial No:</strong> <%= report.instrument_data?.serial_no || "N/A" %></p>
-                </div>
-                <div class="cert-section">
-                    <h4>Metrological Characteristics</h4>
-                    <p><strong>Accuracy Class:</strong> <%= report.instrument_data?.Class_value || "N/A" %></p>
-                    <p><strong>Max Capacity (Max):</strong> <%= report.instrument_data?.capacity ? report.instrument_data.capacity + ' ' + (report.instrument_data.max_unit || 'kg') : "N/A" %></p>
-                    <p><strong>Verification Scale (e):</strong> <%= report.instrument_data?.e_value ? report.instrument_data.e_value + ' ' + (report.instrument_data.e_unit || 'g') : "N/A" %></p>
-                    <p><strong>Min Capacity (Min):</strong> <%= report.instrument_data?.min_capacity ? report.instrument_data.min_capacity + ' ' + (report.instrument_data.min_unit || 'g') : "N/A" %></p>
-                </div>
-            </div>
+        <div class="a4-preview cert-page">
+            <div class="cert-frame"></div>
+            <div class="watermark">NAWI &nbsp; CERTIFIED</div>
+            <div class="certificate-inner">
 
-            <div class="cert-section" style="margin-bottom: 20px;">
-                <h4>Testing Overview</h4>
-                <p><strong>Certificate ID:</strong> <%= report._id %></p>
-                <p><strong>Date of Testing:</strong> <%= new Date(report.createdAt).toLocaleDateString() %></p>
-                <p><strong>Overall Result:</strong> <strong style="color: <%= status === 'PASS' ? '#1E7A4C' : '#e74c3c' %>;"><%= status %></strong></p>
-            </div>
+                <div class="cert-header">
+                    <div class="brand-mark">
+                        <div class="emblem"><i class="fas fa-balance-scale"></i></div>
+                        <div>
+                            <div class="org-name">Legal Metrology &middot; NAWI Test Division</div>
+                            <h1>Certificate of Calibration</h1>
+                            <h3>OIML R-76 Compliant Non-Automatic Weighing Instrument Test</h3>
+                        </div>
+                    </div>
+                    <div class="cert-id-box">
+                        <div class="label">Certificate No.</div>
+                        <div class="value">
+                            <%= report._id %>
+                        </div>
+                    </div>
+                </div>
 
-            <div class="cert-tables">
-                <% if (report.form1_results) { %>
-                <div class="cert-table-wrapper full-width">
-                    <h4>Weighing Performance Test</h4>
-                    <table width="100%" border="1" cellspacing="0" cellpadding="4">
-                        <tr>
-                            <th>Load</th>
-                            <th>Ascending</th>
-                            <th>Descending</th>
-                            <th>Error</th>
-                            <th>MPE</th>
-                            <th>Status</th>
-                        </tr>
-                        <% Object.values(report.form1_results).slice(0, 10).forEach(row => { 
-                            if(row.load_g !== undefined) {
-                        %>
-                        <tr>
-                            <td><%= row.load_g %></td>
-                            <td><%= row.asc_reading %></td>
-                            <td><%= row.desc_reading %></td>
-                            <td><%= row.asc_error %> / <%= row.desc_error %></td>
-                            <td>±<%= row.limit %></td>
-                            <td style="color: <%= (row.asc_status === 'PASS' && row.desc_status === 'PASS') ? '#1E7A4C' : '#e74c3c' %>"><%= (row.asc_status === 'PASS' && row.desc_status === 'PASS') ? 'PASS' : 'FAIL' %></td>
-                        </tr>
-                        <% }}) %>
-                    </table>
+                <div class="cert-meta-row">
+                    <div>Instrument ID: <strong>
+                            <%= report.instrument_id %>
+                        </strong></div>
+                    <div>Date of Testing: <strong>
+                            <%= new Date(report.createdAt).toLocaleDateString('en-IN', { day:'2-digit', month:'long',
+                                year:'numeric' }) %>
+                        </strong></div>
                 </div>
-                <% } %>
 
-                <% if (report.form2_results) { const rep = report.form2_results; %>
-                <div class="cert-table-wrapper">
-                    <h4>Repeatability Test</h4>
-                    <table width="100%" border="1" cellspacing="0" cellpadding="4">
-                        <tr>
-                            <th>Load</th>
-                            <th>Max Error (E)</th>
-                            <th>MPE</th>
-                            <th>Status</th>
-                        </tr>
-                        <tr>
-                            <td><%= rep.testLoad %></td>
-                            <td><%= rep.range %></td>
-                            <td><%= rep.limit %></td>
-                            <td style="color: <%= rep.Repeatability === 'PASS' ? '#1E7A4C' : '#e74c3c' %>"><%= rep.Repeatability %></td>
-                        </tr>
-                    </table>
+                <div class="status-ribbon">
+                    <span class="overall">Overall Test Result</span>
+                    <span class="status-pill <%= status === 'PASS' ? 'pass' : 'fail' %>">
+                        <%= status %>
+                    </span>
                 </div>
-                <% } %>
 
-                <% if (report.form3_results && report.form3_results.details) { %>
-                <div class="cert-table-wrapper">
-                    <h4>Eccentricity Test</h4>
-                    <table width="100%" border="1" cellspacing="0" cellpadding="4">
-                        <tr>
-                            <th>Pos</th>
-                            <th>Load</th>
-                            <th>Error</th>
-                            <th>Status</th>
-                        </tr>
-                        <% Object.entries(report.form3_results.details).forEach(([pos, data]) => { %>
-                        <tr>
-                            <td style="text-transform: capitalize;"><%= pos %></td>
-                            <td><%= data.appliedLoad %></td>
-                            <td><%= data.error %></td>
-                            <td style="color: <%= data.result === 'PASS' ? '#1E7A4C' : '#e74c3c' %>"><%= data.result %></td>
-                        </tr>
-                        <% }) %>
-                    </table>
-                </div>
-                <% } %>
-            </div>
+                <% if (summary.length) { %>
+                    <div class="summary-strip">
+                        <% summary.forEach(s=> { %>
+                            <div class="summary-chip">
+                                <span class="dot <%= s.pass ? 'pass' : 'fail' %>"></span>
+                                <%= s.name %>
+                            </div>
+                            <% }) %>
+                    </div>
+                    <% } %>
 
-            <div class="cert-footer" style="position: absolute; bottom: 32px; left: 32px; right: 32px;">
-                <div class="seal">
-                    <div style="font-size: 8px;">VALIDATED<br>NAWI<br>REPORT</div>
-                </div>
-                <div class="signature-block">
-                    <div class="signature-line">Authorized Signatory</div>
-                </div>
+                        <div class="cert-grid">
+                            <div class="cert-section">
+                                <h4>Instrument Details</h4>
+                                <p><strong>Type</strong><span class="val">
+                                        <%= report.instrument_data?.instrument_type || "N/A" %>
+                                    </span></p>
+                                <p><strong>Manufacturer</strong><span class="val">
+                                        <%= report.instrument_data?.manufacturer || "N/A" %>
+                                    </span></p>
+                                <p><strong>Model</strong><span class="val">
+                                        <%= report.instrument_data?.model || "N/A" %>
+                                    </span></p>
+                                <p><strong>Serial No.</strong><span class="val">
+                                        <%= report.instrument_data?.serial_no || "N/A" %>
+                                    </span></p>
+                            </div>
+                            <div class="cert-section">
+                                <h4>Metrological Characteristics</h4>
+                                <p><strong>Accuracy Class</strong><span class="val">
+                                        <%= report.instrument_data?.Class_value || "N/A" %>
+                                    </span></p>
+                                <p><strong>Max Capacity (Max)</strong><span class="val">
+                                        <%= report.instrument_data?.capacity ? report.instrument_data.capacity + ' ' +
+                                            (report.instrument_data.max_unit || 'kg' ) : "N/A" %>
+                                    </span></p>
+                                <p><strong>Verification Scale (e)</strong><span class="val">
+                                        <%= report.instrument_data?.e_value ? report.instrument_data.e_value + ' ' +
+                                            (report.instrument_data.e_unit || 'g' ) : "N/A" %>
+                                    </span></p>
+                                <p><strong>Min Capacity (Min)</strong><span class="val">
+                                        <%= report.instrument_data?.min_capacity ? report.instrument_data.min_capacity
+                                            + ' ' + (report.instrument_data.min_unit || 'g' ) : "N/A" %>
+                                    </span></p>
+                            </div>
+                        </div>
+
+                        <div class="cert-tables">
+
+                            <% if (report.form1_results) { %>
+                                <div class="cert-table-wrapper full-width">
+                                    <h4>Weighing Performance Test</h4>
+                                    <table>
+                                        <tr>
+                                            <th>Load</th>
+                                            <th>Ascending</th>
+                                            <th>Descending</th>
+                                            <th>Error (A / D)</th>
+                                            <th>MPE</th>
+                                            <th>Status</th>
+                                        </tr>
+                                        <% Object.values(report.form1_results).slice(0, 10).forEach(row=> {
+                                            if(row.load_g !== undefined) { %>
+                                            <tr>
+                                                <td>
+                                                    <%= row.load_g %>
+                                                </td>
+                                                <td>
+                                                    <%= row.asc_reading %>
+                                                </td>
+                                                <td>
+                                                    <%= row.desc_reading %>
+                                                </td>
+                                                <td>
+                                                    <%= row.asc_error %> / <%= row.desc_error %>
+                                                </td>
+                                                <td>&plusmn;<%= row.limit %>
+                                                </td>
+                                                <td><span
+                                                        class="status-tag <%= (row.asc_status === 'PASS' && row.desc_status === 'PASS') ? 'pass' : 'fail' %>">
+                                                        <%= (row.asc_status==='PASS' && row.desc_status==='PASS' )
+                                                            ? 'PASS' : 'FAIL' %>
+                                                    </span></td>
+                                            </tr>
+                                            <% }}) %>
+                                    </table>
+                                </div>
+                                <% } %>
+
+                                    <div class="table-row">
+                                        <% if (report.form2_results) { const rep=report.form2_results; %>
+                                            <div class="cert-table-wrapper">
+                                                <h4>Repeatability Test</h4>
+                                                <table>
+                                                    <tr>
+                                                        <th>Load</th>
+                                                        <th>Max Error (E)</th>
+                                                        <th>MPE</th>
+                                                        <th>Status</th>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>
+                                                            <%= rep.testLoad %>
+                                                        </td>
+                                                        <td>
+                                                            <%= rep.range %>
+                                                        </td>
+                                                        <td>
+                                                            <%= rep.limit %>
+                                                        </td>
+                                                        <td><span
+                                                                class="status-tag <%= rep.Repeatability === 'PASS' ? 'pass' : 'fail' %>">
+                                                                <%= rep.Repeatability %>
+                                                            </span></td>
+                                                    </tr>
+                                                </table>
+                                            </div>
+                                            <% } %>
+
+                                                <% if (report.form3_results && report.form3_results.details) { %>
+                                                    <div class="cert-table-wrapper">
+                                                        <h4>Eccentricity Test</h4>
+                                                        <table>
+                                                            <tr>
+                                                                <th>Position</th>
+                                                                <th>Load</th>
+                                                                <th>Error</th>
+                                                                <th>Status</th>
+                                                            </tr>
+                                                            <% Object.entries(report.form3_results.details).forEach(([pos,
+                                                                data])=> { %>
+                                                                <tr>
+                                                                    <td style="text-transform:capitalize;">
+                                                                        <%= pos %>
+                                                                    </td>
+                                                                    <td>
+                                                                        <%= data.appliedLoad %>
+                                                                    </td>
+                                                                    <td>
+                                                                        <%= data.error %>
+                                                                    </td>
+                                                                    <td><span
+                                                                            class="status-tag <%= data.result === 'PASS' ? 'pass' : 'fail' %>">
+                                                                            <%= data.result %>
+                                                                        </span></td>
+                                                                </tr>
+                                                                <% }) %>
+                                                        </table>
+                                                    </div>
+                                                    <% } %>
+                                    </div>
+
+                                    <div class="table-row">
+                                        <% if (report.form0_results && report.form0_results.items) { %>
+                                            <div class="cert-table-wrapper">
+                                                <h4>Visual Inspection <span class="count-tag">(<%=
+                                                            Object.keys(report.form0_results.items).length %>
+                                                            items)</span></h4>
+                                                <table>
+                                                    <tr>
+                                                        <th>Item</th>
+                                                        <th>Status</th>
+                                                    </tr>
+                                                    <% Object.entries(report.form0_results.items).forEach(([key, val])=>
+                                                        { %>
+                                                        <tr>
+                                                            <td style="text-transform:capitalize;">
+                                                                <%= key %>
+                                                            </td>
+                                                            <td><span
+                                                                    class="status-tag <%= val === 'on' ? 'pass' : 'fail' %>">
+                                                                    <%= val==='on' ? 'PASS' : 'FAIL' %>
+                                                                </span></td>
+                                                        </tr>
+                                                        <% }) %>
+                                                </table>
+                                            </div>
+                                            <% } %>
+
+                                                <% if (simpleTests.some(t=> t.data)) { %>
+                                                    <div class="cert-table-wrapper">
+                                                        <h4>Additional Verification Tests</h4>
+                                                        <table>
+                                                            <tr>
+                                                                <th>Parameter</th>
+                                                                <th>Error</th>
+                                                                <th>Limit</th>
+                                                                <th>Status</th>
+                                                            </tr>
+                                                            <% simpleTests.forEach(test=> { if (test.data) { %>
+                                                                <tr>
+                                                                    <td>
+                                                                        <%= test.name %>
+                                                                    </td>
+                                                                    <td>
+                                                                        <%= test.data.error ?? test.data.error_g ??
+                                                                            test.data.val ?? 'N/A' %>
+                                                                    </td>
+                                                                    <td>&plusmn;<%= test.data.limit ?? test.data.limit_g
+                                                                            ?? test.data.mpe ?? 'N/A' %>
+                                                                    </td>
+                                                                    <td><span
+                                                                            class="status-tag <%= test.data[test.resKey] === 'PASS' ? 'pass' : 'fail' %>">
+                                                                            <%= test.data[test.resKey] %>
+                                                                        </span></td>
+                                                                </tr>
+                                                                <% }}) %>
+                                                        </table>
+                                                    </div>
+                                                    <% } %>
+                                    </div>
+
+                        </div>
+
+                        <div class="cert-footer">
+                            <div class="seal">
+                                <div>VALIDATED<br>NAWI<br>REPORT</div>
+                            </div>
+                            <div class="footer-note">
+                                This certificate is issued in accordance with OIML R-76 test procedures for
+                                Non-Automatic Weighing Instruments. Results apply only to the instrument identified
+                                above at the time of testing.
+                            </div>
+                            <div class="signature-block">
+                                <div class="signature-line">Authorized Signatory</div>
+                                <div class="designation">Metrology Test Officer</div>
+                            </div>
+                        </div>
             </div>
         </div>
-    </div>
 </body>
+
 </html>
