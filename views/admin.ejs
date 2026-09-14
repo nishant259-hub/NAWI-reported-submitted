@@ -577,57 +577,6 @@
                     </div>
                 </div>
             </div>
-
-            <!-- Tests Conducted Under Current Active Rule Set -->
-            <% const activeRuleTests = reports.filter(r => (r.rule_set_version || 'OIML R-76 V1') === activeRule.version_name); %>
-            <div class="card" style="margin-bottom: 24px;">
-                <div class="card-header">
-                    <span class="card-title">
-                        <i class="fas fa-vial" style="color:var(--brand);"></i> 
-                        Tests Conducted Under Current Active Rule Set (<%= activeRule.version_name %>)
-                    </span>
-                    <span style="font-size:0.8rem; color:var(--muted);"><%= activeRuleTests.length %> Tests Linked</span>
-                </div>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Test ID</th>
-                            <th>Instrument</th>
-                            <th>Class</th>
-                            <th>Tester</th>
-                            <th>Date</th>
-                            <th>Result</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <% if (activeRuleTests.length === 0) { %>
-                        <tr><td colspan="7"><div class="empty"><i class="fas fa-inbox"></i><p>No tests conducted under <%= activeRule.version_name %> yet.</p></div></td></tr>
-                        <% } %>
-                        <% activeRuleTests.forEach(r => { %>
-                        <tr>
-                            <td style="font-family:monospace; color:var(--brand); font-weight:600; font-size:0.8rem;">
-                                T-<%= r._id.toString().substring(0,8).toUpperCase() %>
-                            </td>
-                            <td><strong><%= r.instrument_id || '—' %></strong></td>
-                            <td style="color:var(--muted); font-size:0.8rem;">
-                                <%= (r.instrument_data && r.instrument_data.Class_value) ? r.instrument_data.Class_value : '—' %>
-                            </td>
-                            <td><strong><%= r.createdBy || 'Nishant' %></strong></td>
-                            <td style="color:var(--muted); font-size:0.8rem;"><%= new Date(r.createdAt).toLocaleDateString('en-IN') %></td>
-                            <td><span class="badge <%= r.status === 'PASS' ? 'pass' : 'fail' %>">
-                                <span class="dot <%= r.status === 'PASS' ? 'pass' : 'fail' %>"></span> <%= r.status %>
-                            </span></td>
-                            <td>
-                                <a href="/report?id=<%= r._id %>" class="btn btn-outline btn-sm" target="_blank">
-                                    <i class="fas fa-eye"></i> View Report
-                                </a>
-                            </td>
-                        </tr>
-                        <% }) %>
-                    </tbody>
-                </table>
-            </div>
             <% } %>
 
             <div class="rule-grid">
