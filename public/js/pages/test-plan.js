@@ -21,6 +21,10 @@ const plan = generateTestPlan(instr);
 const testPoints = generateTestPoints(instr.max_g, instr.min_g, instr.e_g, instr.cls);
 
 // Populate Header Info
+const ruleSetVer = localStorage.getItem("RuleSetVersion") || "OIML R-76 V1";
+const ruleSetEl = document.getElementById("display-rule-set");
+if (ruleSetEl) ruleSetEl.textContent = ruleSetVer;
+
 const clsDisplay = cls.replace("class ", "Class ");
 let nameStr = (instrData.manufacturer || "Unknown") + (instrData.model ? " " + instrData.model : " Scale");
 document.getElementById("display-instrument").innerHTML = 

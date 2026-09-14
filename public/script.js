@@ -47,8 +47,9 @@ async function proceed() {
     localStorage.setItem("InstrumentData",    JSON.stringify(data));
     localStorage.setItem("LabDetails",        JSON.stringify(labDetails));
     localStorage.setItem("InstrumentPhoto",   photoBase64);
-    localStorage.setItem("RuleSetVersion",    data.rule_set_version || "OIML R-76 V1");
-    localStorage.setItem("RuleSetRules",      JSON.stringify(window.ACTIVE_OIML_RULES || {}));
+    const activeRuleVer = document.getElementById("rule_set_version")?.value || data.rule_set_version || localStorage.getItem("RuleSetVersion") || "OIML R-76 V1";
+    localStorage.setItem("RuleSetVersion",    activeRuleVer);
+    localStorage.setItem("RuleSetRules",      JSON.stringify(window.ACTIVE_OIML_RULES || JSON.parse(localStorage.getItem("RuleSetRules") || "{}")));
     
     localStorage.setItem("Capacity",          maxKg);
     localStorage.setItem("eValue",            eG);
@@ -177,9 +178,15 @@ if (_container) {
             </div>`;
         });
 
+        const activeRuleVersion = localStorage.getItem("RuleSetVersion") || "OIML R-76 V1";
         _container.innerHTML = `
             <div class="form-card" style="padding: 32px; font-family: 'IBM Plex Sans', sans-serif;">
-                <h3 style="margin-top:0; color:var(--color-ink); font-family:var(--font-display); font-size: 22px;">Test Execution Dashboard</h3>
+                <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:12px;">
+                    <h3 style="margin:0; color:var(--color-ink); font-family:var(--font-display); font-size: 22px;">Test Execution Dashboard</h3>
+                    <span style="background: rgba(14, 124, 134, 0.12); color: #0E7C86; border: 1px solid rgba(14, 124, 134, 0.3); padding: 4px 14px; border-radius: 20px; font-size: 0.8rem; font-weight: 700;">
+                        <i class="fas fa-book"></i> Active Rule Set: ${activeRuleVersion}
+                    </span>
+                </div>
                 
                 <div style="margin-top: 24px; margin-bottom: 24px; color:#555; font-family: monospace;">
                     <div style="margin-bottom: 6px; font-size: 14px;">Progress</div>

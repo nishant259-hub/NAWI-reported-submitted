@@ -522,34 +522,139 @@
                 <strong style="color:var(--text);">Version Flow:</strong>
                 <% rulesets.forEach((r, i) => { %>
                 <span style="color: <%= r.isActive ? 'var(--brand)' : 'var(--muted)' %>; font-weight: <%= r.isActive ? '700' : '400' %>;">
-                    <%= r.version_name %> (<%= r.isActive ? '✓ ACTIVE' : 'ARCHIVED' %>)
+                    <%= r.version_name %> (<%= r.isActive ? '✓ ACTIVE FOR TESTS' : 'ARCHIVED' %>)
                 </span>
                 <% if (i < rulesets.length - 1) { %> → <% } %>
                 <% }) %>
             </div>
 
+            <!-- Active Rule Set Highlight Card for Tests -->
+            <% if (activeRule) { 
+                const activeTestsCount = reports.filter(r => (r.rule_set_version || 'OIML R-76 V1') === activeRule.version_name).length;
+            %>
+            <div style="background: #f0fdfa; border: 2px solid var(--brand); border-radius: 12px; padding: 20px; margin-bottom: 24px; box-shadow: 0 4px 14px rgba(13,148,136,0.08);">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 14px;">
+                    <div>
+                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+                            <span class="badge active" style="font-size:0.75rem; padding: 4px 12px;"><span class="dot active"></span> CURRENT ACTIVE RULE SET FOR TESTS</span>
+                            <span style="font-size: 0.8rem; color: var(--muted); font-weight: 600;">Governing All Live & Future Tests</span>
+                        </div>
+                        <h3 style="font-size: 1.3rem; font-weight: 700; color: var(--brand-dark); margin: 0 0 4px;"><%= activeRule.version_name %></h3>
+                        <p style="color: var(--muted); font-size: 0.85rem; margin: 0;"><%= activeRule.description || 'Standard OIML R-76 Tolerances and Limits' %></p>
+                    </div>
+                    <div style="text-align: right; background: white; padding: 10px 18px; border-radius: 8px; border: 1px solid var(--border);">
+                        <div style="font-size: 0.72rem; text-transform: uppercase; color: var(--muted); font-weight: 700; letter-spacing: .5px;">Tests Conducted</div>
+                        <div style="font-size: 1.8rem; font-weight: 800; color: var(--brand); line-height: 1.1;"><%= activeTestsCount %></div>
+                        <div style="font-size: 0.72rem; color: var(--muted);">Live reports using this rule set</div>
+                    </div>
+                </div>
+
+                <!-- Active Test Rules Parameters Grid -->
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 10px; margin-top: 16px; padding-top: 14px; border-top: 1px dashed rgba(13,148,136,0.25); font-size: 0.78rem;">
+                    <div style="background: white; padding: 10px 12px; border-radius: 8px; border: 1px solid var(--border);">
+                        <strong style="color: var(--brand);"><i class="fas fa-weight"></i> Weighing Test (MPE)</strong>
+                        <div style="color: var(--muted); margin-top: 2px;">Class I, II, III, IIII Limits</div>
+                    </div>
+                    <div style="background: white; padding: 10px 12px; border-radius: 8px; border: 1px solid var(--border);">
+                        <strong style="color: #7c3aed;"><i class="fas fa-redo"></i> Repeatability Test</strong>
+                        <div style="color: var(--muted); margin-top: 2px;">Max Diff &le; <%= (activeRule.rules && activeRule.rules.repeatability) ? activeRule.rules.repeatability.max_diff_e : 1.0 %> <em>e</em></div>
+                    </div>
+                    <div style="background: white; padding: 10px 12px; border-radius: 8px; border: 1px solid var(--border);">
+                        <strong style="color: #0284c7;"><i class="fas fa-arrows-alt"></i> Eccentricity Test</strong>
+                        <div style="color: var(--muted); margin-top: 2px;">Load: <%= (activeRule.rules && activeRule.rules.eccentricity) ? Math.round(activeRule.rules.eccentricity.load_fraction * 100) : 33 %>% of Max</div>
+                    </div>
+                    <div style="background: white; padding: 10px 12px; border-radius: 8px; border: 1px solid var(--border);">
+                        <strong style="color: #d97706;"><i class="fas fa-box"></i> Tare Accuracy Test</strong>
+                        <div style="color: var(--muted); margin-top: 2px;">Tolerance: <%= (activeRule.rules && activeRule.rules.tare) ? activeRule.rules.tare.mpe_multiplier : 1.0 %> &times; MPE</div>
+                    </div>
+                    <div style="background: white; padding: 10px 12px; border-radius: 8px; border: 1px solid var(--border);">
+                        <strong style="color: #059669;"><i class="fas fa-bullseye"></i> Zero Setting Test</strong>
+                        <div style="color: var(--muted); margin-top: 2px;">Max Error &le; <%= (activeRule.rules && activeRule.rules.zero_setting) ? activeRule.rules.zero_setting.limit_e : 0.25 %> <em>e</em></div>
+                    </div>
+                    <div style="background: white; padding: 10px 12px; border-radius: 8px; border: 1px solid var(--border);">
+                        <strong style="color: #dc2626;"><i class="fas fa-compass"></i> Tilt Test (Mobile)</strong>
+                        <div style="color: var(--muted); margin-top: 2px;">Limit &le; <%= (activeRule.rules && activeRule.rules.tilt) ? activeRule.rules.tilt.limit_e : 1.0 %> <em>e</em></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tests Conducted Under Current Active Rule Set -->
+            <% const activeRuleTests = reports.filter(r => (r.rule_set_version || 'OIML R-76 V1') === activeRule.version_name); %>
+            <div class="card" style="margin-bottom: 24px;">
+                <div class="card-header">
+                    <span class="card-title">
+                        <i class="fas fa-vial" style="color:var(--brand);"></i> 
+                        Tests Conducted Under Current Active Rule Set (<%= activeRule.version_name %>)
+                    </span>
+                    <span style="font-size:0.8rem; color:var(--muted);"><%= activeRuleTests.length %> Tests Linked</span>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Test ID</th>
+                            <th>Instrument</th>
+                            <th>Class</th>
+                            <th>Tester</th>
+                            <th>Date</th>
+                            <th>Result</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% if (activeRuleTests.length === 0) { %>
+                        <tr><td colspan="7"><div class="empty"><i class="fas fa-inbox"></i><p>No tests conducted under <%= activeRule.version_name %> yet.</p></div></td></tr>
+                        <% } %>
+                        <% activeRuleTests.forEach(r => { %>
+                        <tr>
+                            <td style="font-family:monospace; color:var(--brand); font-weight:600; font-size:0.8rem;">
+                                T-<%= r._id.toString().substring(0,8).toUpperCase() %>
+                            </td>
+                            <td><strong><%= r.instrument_id || '—' %></strong></td>
+                            <td style="color:var(--muted); font-size:0.8rem;">
+                                <%= (r.instrument_data && r.instrument_data.Class_value) ? r.instrument_data.Class_value : '—' %>
+                            </td>
+                            <td><strong><%= r.createdBy || 'Nishant' %></strong></td>
+                            <td style="color:var(--muted); font-size:0.8rem;"><%= new Date(r.createdAt).toLocaleDateString('en-IN') %></td>
+                            <td><span class="badge <%= r.status === 'PASS' ? 'pass' : 'fail' %>">
+                                <span class="dot <%= r.status === 'PASS' ? 'pass' : 'fail' %>"></span> <%= r.status %>
+                            </span></td>
+                            <td>
+                                <a href="/report?id=<%= r._id %>" class="btn btn-outline btn-sm" target="_blank">
+                                    <i class="fas fa-eye"></i> View Report
+                                </a>
+                            </td>
+                        </tr>
+                        <% }) %>
+                    </tbody>
+                </table>
+            </div>
+            <% } %>
+
             <div class="rule-grid">
                 <% if (rulesets.length === 0) { %>
                 <div class="empty"><i class="fas fa-book-open"></i><p>No rule sets found.</p></div>
                 <% } %>
-                <% rulesets.forEach(rule => { %>
+                <% rulesets.forEach(rule => { 
+                    const linkedCount = reports.filter(r => (r.rule_set_version || 'OIML R-76 V1') === rule.version_name).length;
+                %>
                 <div class="rule-card <%= rule.isActive ? 'is-active' : '' %>">
                     <div class="rule-card-header">
                         <div>
                             <div class="rule-name"><%= rule.version_name %></div>
                             <div class="rule-meta">
                                 Added <%= new Date(rule.createdAt).toLocaleDateString('en-IN') %> by <strong><%= rule.createdBy || 'Admin' %></strong>
+                                &bull; <strong style="color:var(--brand);"><%= linkedCount %> tests linked</strong>
                             </div>
                         </div>
                         <span class="badge <%= rule.isActive ? 'active' : 'inactive' %>">
                             <span class="dot <%= rule.isActive ? 'active' : 'inactive' %>"></span>
-                            <%= rule.isActive ? 'ACTIVE' : 'ARCHIVED' %>
+                            <%= rule.isActive ? 'CURRENT ACTIVE FOR TESTS' : 'ARCHIVED' %>
                         </span>
                     </div>
                     <div style="font-size:0.85rem; color:var(--muted); margin-bottom:12px;"><%= rule.description || 'No description provided.' %></div>
 
                     <% if (rule.rules && rule.rules.mpe) { %>
-                    <div style="background:var(--bg); border-radius:8px; padding:12px; font-size:0.78rem; color:var(--muted);">
+                    <div style="background:var(--bg); border-radius:8px; padding:12px; font-size:0.78rem; color:var(--muted); margin-bottom:10px;">
                         <strong style="color:var(--text);">MPE Class Intervals:</strong><br>
                         <% Object.entries(rule.rules.mpe).forEach(([cls, data]) => { %>
                         <span style="margin-right:12px;"><%= cls.replace('_',' ').toUpperCase() %>: [<%= (data.e_intervals||[]).join(', ') %>]e</span>
@@ -557,13 +662,21 @@
                     </div>
                     <% } %>
 
+                    <!-- Test Rules Chips -->
+                    <div style="display:flex; flex-wrap:wrap; gap:6px; font-size:0.72rem; margin-bottom:14px;">
+                        <span style="background:#e0f2fe; color:#0369a1; padding:3px 8px; border-radius:4px; font-weight:600;">Repeatability: &le;<%= rule.rules?.repeatability?.max_diff_e || 1.0 %>e</span>
+                        <span style="background:#ede9fe; color:#6d28d9; padding:3px 8px; border-radius:4px; font-weight:600;">Zero: &le;<%= rule.rules?.zero_setting?.limit_e || 0.25 %>e</span>
+                        <span style="background:#fef3c7; color:#92400e; padding:3px 8px; border-radius:4px; font-weight:600;">Tare: <%= rule.rules?.tare?.mpe_multiplier || 1.0 %>x</span>
+                        <span style="background:#fee2e2; color:#991b1b; padding:3px 8px; border-radius:4px; font-weight:600;">Tilt: &le;<%= rule.rules?.tilt?.limit_e || 1.0 %>e</span>
+                    </div>
+
                     <div class="rule-actions">
                         <% if (!rule.isActive) { %>
                         <button class="btn btn-primary btn-sm" onclick="activateRule('<%= rule._id %>', '<%= rule.version_name %>')">
-                            <i class="fas fa-check-circle"></i> Activate
+                            <i class="fas fa-check-circle"></i> Activate for Current Tests
                         </button>
                         <% } else { %>
-                        <span style="font-size:0.8rem; color:var(--brand); font-weight:600;"><i class="fas fa-lock"></i> Currently Active — cannot deactivate</span>
+                        <span style="font-size:0.8rem; color:var(--brand); font-weight:600;"><i class="fas fa-lock"></i> Currently Active — Governs all tests</span>
                         <% } %>
                     </div>
                 </div>
@@ -741,6 +854,33 @@
                     </div>
                 </div>
             </div>
+
+            <!-- OTHER TESTS TOLERANCES -->
+            <div style="border: 1px solid var(--border); border-radius: 8px; padding: 14px; margin-top: 12px; background: white;">
+                <div style="font-weight: 700; margin-bottom: 10px; color: var(--text);"><i class="fas fa-cogs" style="color:var(--brand);"></i> Additional Test Limits & Rules</div>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 10px; font-size: 0.78rem;">
+                    <div>
+                        <label style="display:block; color:var(--muted); margin-bottom:4px;">Repeatability (&le; e)</label>
+                        <input type="number" step="0.1" id="rule_rep_diff" value="1.0" class="rule-input">
+                    </div>
+                    <div>
+                        <label style="display:block; color:var(--muted); margin-bottom:4px;">Eccentricity Load</label>
+                        <input type="number" step="0.01" id="rule_ecc_frac" value="0.33" class="rule-input">
+                    </div>
+                    <div>
+                        <label style="display:block; color:var(--muted); margin-bottom:4px;">Tare (&times;MPE)</label>
+                        <input type="number" step="0.1" id="rule_tare_mult" value="1.0" class="rule-input">
+                    </div>
+                    <div>
+                        <label style="display:block; color:var(--muted); margin-bottom:4px;">Zero Limit (&le; e)</label>
+                        <input type="number" step="0.05" id="rule_zero_lim" value="0.25" class="rule-input">
+                    </div>
+                    <div>
+                        <label style="display:block; color:var(--muted); margin-bottom:4px;">Tilt Limit (&le; e)</label>
+                        <input type="number" step="0.1" id="rule_tilt_lim" value="1.0" class="rule-input">
+                    </div>
+                </div>
+            </div>
         </div>
 
         <div style="background: #fef9c3; border: 1px solid #fde047; border-radius: 8px; padding: 12px; margin-top: 14px; font-size: 0.8rem; color: #713f12;">
@@ -868,6 +1008,21 @@
                         Number(document.getElementById('c4_m3').value)
                     ]
                 }
+            },
+            repeatability: {
+                max_diff_e: Number(document.getElementById('rule_rep_diff')?.value || 1.0)
+            },
+            eccentricity: {
+                load_fraction: Number(document.getElementById('rule_ecc_frac')?.value || 0.33)
+            },
+            tare: {
+                mpe_multiplier: Number(document.getElementById('rule_tare_mult')?.value || 1.0)
+            },
+            zero_setting: {
+                limit_e: Number(document.getElementById('rule_zero_lim')?.value || 0.25)
+            },
+            tilt: {
+                limit_e: Number(document.getElementById('rule_tilt_lim')?.value || 1.0)
             }
         };
 

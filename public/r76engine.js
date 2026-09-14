@@ -4,6 +4,16 @@
 // All weights are in GRAMS unless noted.
 // ================================================================
 
+// Automatically sync active OIML rules from localStorage if not defined on window
+if (typeof window !== 'undefined' && (!window.ACTIVE_OIML_RULES || Object.keys(window.ACTIVE_OIML_RULES).length === 0)) {
+    try {
+        const storedRules = localStorage.getItem("RuleSetRules");
+        if (storedRules) {
+            window.ACTIVE_OIML_RULES = JSON.parse(storedRules);
+        }
+    } catch(e) {}
+}
+
 function _normalizeClass(cls) {
     return (cls || "").replace(/class\s*/i, "").trim().toUpperCase();
 }
@@ -133,9 +143,16 @@ function generateTestPlan(instr) {
         hasMultiPosition = true   // false → eccentricity N/A
     } = instr;
 
+    const activeRules = (typeof window !== 'undefined' && window.ACTIVE_OIML_RULES) ? window.ACTIVE_OIML_RULES : {};
+    const eccFrac     = (activeRules.eccentricity && activeRules.eccentricity.load_fraction) ? activeRules.eccentricity.load_fraction : (1/3);
+    const repMaxDiffE = (activeRules.repeatability && activeRules.repeatability.max_diff_e) ? activeRules.repeatability.max_diff_e : 1.0;
+    const zeroLimitE  = (activeRules.zero_setting && activeRules.zero_setting.limit_e) ? activeRules.zero_setting.limit_e : 0.25;
+    const tiltLimitE  = (activeRules.tilt && activeRules.tilt.limit_e) ? activeRules.tilt.limit_e : 1.0;
+    const tareMult    = (activeRules.tare && activeRules.tare.mpe_multiplier) ? activeRules.tare.mpe_multiplier : 1.0;
+
     const testPoints  = generateTestPoints(max_g, min_g, e_g, cls);
     const repeatLoad  = Math.round((max_g / 2) / e_g) * e_g;
-    const eccLoad     = Math.round((max_g / 3) / e_g) * e_g;
+    const eccLoad     = Math.round((max_g * eccFrac) / e_g) * e_g;
     const numReadings = getRepeatabilityReadings(cls);
     const nonZeroPts  = testPoints.filter(p => p > 0);
 
@@ -163,9 +180,10 @@ function generateTestPlan(instr) {
             shortName: "Repeat.",
             icon: "fas fa-sync-alt",
             status: "REQUIRED",
-            note: `${numReadings} readings at ${(repeatLoad/1000).toFixed(3)} kg (½ Max)`,
+            note: `${numReadings} readings at ${(repeatLoad/1000).toFixed(3)} kg (½ Max, max diff ≤ ${repMaxDiffE}e)`,
             load: repeatLoad,
-            readings: numReadings
+            readings: numReadings,
+            max_diff_e: repMaxDiffE
         },
         {
             id: 4,
@@ -174,7 +192,7 @@ function generateTestPlan(instr) {
             icon: "fas fa-crosshairs",
             status: hasMultiPosition ? "REQUIRED" : "NOT_APPLICABLE",
             note: hasMultiPosition
-                ? `5 positions at ${(eccLoad/1000).toFixed(3)} kg (⅓ Max)`
+                ? `5 positions at ${(eccLoad/1000).toFixed(3)} kg (~${Math.round(eccFrac * 100)}% Max)`
                 : "N/A — single-point load receptor (e.g. crane/hanging scale)",
             load: eccLoad,
             positions: ["Front", "Right", "Rear", "Left", "Center"]
@@ -185,8 +203,9 @@ function generateTestPlan(instr) {
             shortName: "Zero",
             icon: "fas fa-bullseye",
             status: "REQUIRED",
-            note: `Limit: ±0.5e = ±${e_g/2} g`,
-            halfE_g: e_g / 2
+            note: `Limit: ±${zeroLimitE}e = ±${(zeroLimitE * e_g).toFixed(2)} g`,
+            halfE_g: zeroLimitE * e_g,
+            limit_e: zeroLimitE
         },
         {
             id: 6,
@@ -195,8 +214,9 @@ function generateTestPlan(instr) {
             icon: "fas fa-balance-scale",
             status: hasTare ? "IF_APPLICABLE" : "NOT_APPLICABLE",
             note: hasTare
-                ? "Include if tare device will be used during service"
-                : "N/A — instrument has no tare device"
+                ? `Include if tare device used (Tolerance: ${tareMult} × MPE)`
+                : "N/A — instrument has no tare device",
+            mpe_multiplier: tareMult
         },
         {
             id: 7,
@@ -213,9 +233,10 @@ function generateTestPlan(instr) {
             icon: "fas fa-arrows-alt",
             status: isMobile ? "REQUIRED" : "IF_MOBILE",
             note: isMobile
-                ? `Required — mobile instrument. Limit: 1e = ${e_g} g`
-                : "Include if instrument is used in mobile / portable conditions",
-            limit_g: e_g
+                ? `Required — mobile instrument. Limit: ${tiltLimitE}e = ${(tiltLimitE * e_g).toFixed(2)} g`
+                : `Include if mobile/portable (Limit: ${tiltLimitE}e)`,
+            limit_g: tiltLimitE * e_g,
+            limit_e: tiltLimitE
         }
     ];
 }
