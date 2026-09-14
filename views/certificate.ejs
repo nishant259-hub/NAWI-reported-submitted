@@ -11,6 +11,7 @@
         href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Source+Serif+4:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@400;500;600;700&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="/style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <style>
         :root {
             --ink: #1a2332;
@@ -250,22 +251,86 @@
         }
 
         .cert-id-box {
-            text-align: right;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: #ffffff;
+            padding: 8px 12px;
+            border: 1px solid var(--line);
+            border-radius: 6px;
             font-family: 'Inter', sans-serif;
+            text-align: left;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.03);
         }
 
-        .cert-id-box .label {
-            font-size: 8.5px;
-            letter-spacing: .12em;
+        .qr-code-wrapper {
+            width: 64px;
+            height: 64px;
+            flex-shrink: 0;
+            background: #ffffff;
+            padding: 3px;
+            border: 1px solid var(--line);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .qr-code-img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
+            image-rendering: -webkit-optimize-contrast;
+        }
+
+        .cert-id-details {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .cert-id-details .label {
+            font-size: 8px;
+            letter-spacing: .08em;
             text-transform: uppercase;
             color: var(--line-strong);
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 4px;
         }
 
-        .cert-id-box .value {
-            font-size: 12px;
+        .cert-id-details .value {
+            font-size: 11px;
             font-weight: 700;
             color: var(--brand-deep);
             font-family: 'Inter', monospace;
+            margin: 2px 0 3px;
+            letter-spacing: -0.01em;
+        }
+
+        .cert-id-details .qr-caption {
+            font-size: 8px;
+            color: var(--ink-soft);
+            font-weight: 500;
+            line-height: 1.25;
+            max-width: 170px;
+        }
+
+        .cert-id-details .qr-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 7.5px;
+            font-weight: 700;
+            color: var(--pass);
+            background: #eaf6ee;
+            padding: 2px 6px;
+            border-radius: 10px;
+            margin-top: 4px;
+            width: fit-content;
+            border: 1px solid #bbf7d0;
         }
 
         .status-ribbon {
@@ -637,9 +702,21 @@
                         </div>
                     </div>
                     <div class="cert-id-box">
-                        <div class="label">Certificate No.</div>
-                        <div class="value">
-                            <%= report._id %>
+                        <div class="qr-code-wrapper" id="qr-canvas-container">
+                            <img id="cert-qr-img" 
+                                 src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&margin=0&data=<%= encodeURIComponent('https://nawireported.onrender.com/certificate?id=' + report._id) %>" 
+                                 alt="QR Code - Scan to Verify"
+                                 class="qr-code-img">
+                        </div>
+                        <div class="cert-id-details">
+                            <div class="label"><i class="fas fa-shield-alt" style="color:var(--brand); font-size:8px;"></i> Certificate / Report No.</div>
+                            <div class="value"><%= report._id %></div>
+                            <div class="qr-caption">
+                                <i class="fas fa-qrcode" style="font-size:8px; color:var(--brand);"></i> Scan QR to verify authenticity on portal
+                            </div>
+                            <div class="qr-badge">
+                                <i class="fas fa-check-circle" style="font-size:7.5px;"></i> Official Digital Record
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -925,6 +1002,28 @@
                         </div>
             </div>
         </div>
+    <script>
+        (function() {
+            var qrImg = document.getElementById('cert-qr-img');
+            if (qrImg) {
+                qrImg.onerror = function() {
+                    var container = document.getElementById('qr-canvas-container');
+                    if (container && typeof QRCode !== 'undefined') {
+                        qrImg.style.display = 'none';
+                        container.innerHTML = '';
+                        new QRCode(container, {
+                            text: 'https://nawireported.onrender.com/certificate?id=<%= report._id %>',
+                            width: 58,
+                            height: 58,
+                            colorDark: '#083a44',
+                            colorLight: '#ffffff',
+                            correctLevel: QRCode.CorrectLevel.M
+                        });
+                    }
+                };
+            }
+        })();
+    </script>
 </body>
 
 </html>
