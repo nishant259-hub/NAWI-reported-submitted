@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,55 +10,60 @@
     <link rel="stylesheet" href="/dashboard.css">
     <link rel="stylesheet" href="/css/pages/test-plan.css">
 </head>
+
 <body>
     <div class="app-wrapper">
         <%- include('partials/sidebar') %>
-        <div class="app-main">
-            <%- include('partials/header') %>
-            <div class="app-content">
-                <div class="planner-page">
-                    
-                    <div class="summary-card">
-                        <div class="summary-header">
-                            <h2>AUTOMATIC TEST PLAN</h2>
-                            <div class="test-id" id="display-id">TP-NEW</div>
-                        </div>
-                        <div style="display:flex; align-items:center; gap:8px; margin: 8px 0 10px 0;">
-                            <span style="background: rgba(14, 124, 134, 0.12); color: #0E7C86; border: 1px solid rgba(14, 124, 134, 0.3); padding: 4px 12px; border-radius: 20px; font-size: 0.78rem; font-weight: 700;">
-                                <i class="fas fa-book"></i> Active Rule Set: <span id="display-rule-set">OIML R-76 V1</span>
-                            </span>
-                        </div>
-                        <div class="summary-sub" id="display-instrument">
-                            <!-- Populated via JS -->
-                        </div>
-                        <div class="metrics-bar">
-                            <span id="metric-req">0 Required</span>
-                            <span id="metric-opt">0 Optional</span>
-                            <span id="metric-pts">0 Load Points</span>
-                            <span>~15 min</span>
+            <div class="app-main">
+                <%- include('partials/header') %>
+                    <div class="app-content">
+                        <div class="planner-page">
+
+                            <div class="summary-card">
+                                <div class="summary-header">
+                                    <h2 style="color: var(--brand);">AUTOMATIC TEST PLAN</h2>
+                                    <div class="test-id" id="display-id">TP-NEW</div>
+                                </div>
+                                <div style="display:flex; align-items:center; gap:8px; margin: 8px 0 10px 0;">
+                                    <span
+                                        style="background: rgba(242, 159, 103, 0.15); color: #F29F67; border: 1px solid rgba(242, 159, 103, 0.3); padding: 4px 12px; border-radius: 10px; font-size: 0.78rem; font-weight: 700;">
+                                        <i class="fas fa-book"></i> Active Rule Set: <span id="display-rule-set">
+                                            <%= (typeof activeRule !=='undefined' && activeRule) ? activeRule : 'OIML R-76 V1' %>
+                                        </span>
+                                    </span>
+                                </div>
+
+                                <div class="summary-sub" id="display-instrument">
+                                    <!-- Populated via JS -->
+                                </div>
+                                <div class="metrics-bar">
+                                    <span id="metric-req">0 Required</span>
+                                    <span id="metric-opt">0 Optional</span>
+                                    <span id="metric-pts">0 Load Points</span>
+                                    <span>~15 min</span>
+                                </div>
+                            </div>
+
+                            <div class="list-container">
+                                <div class="list-header">TEST PLAN</div>
+                                <div id="test-list-body">
+                                    <!-- Rows injected here -->
+                                </div>
+                            </div>
+
+                            <div class="footer-action">
+                                <div class="footer-info">
+                                    <i class="fas fa-info-circle" style="color:var(--color-teal);"></i>
+                                    <span id="execute-count">0 required tests will be executed</span>
+                                </div>
+                                <button class="btn" style="background:#3B8FF3;" onclick="confirmAndStart()">
+                                    Confirm Plan & Start <i class="fas fa-arrow-right"></i>
+                                </button>
+                            </div>
+
                         </div>
                     </div>
-
-                    <div class="list-container">
-                        <div class="list-header">TEST PLAN</div>
-                        <div id="test-list-body">
-                            <!-- Rows injected here -->
-                        </div>
-                    </div>
-
-                    <div class="footer-action">
-                        <div class="footer-info">
-                            <i class="fas fa-info-circle" style="color:var(--color-teal);"></i> 
-                            <span id="execute-count">0 required tests will be executed</span>
-                        </div>
-                        <button class="btn" style="background:#0E7C86;" onclick="confirmAndStart()">
-                            Confirm Plan & Start <i class="fas fa-arrow-right"></i>
-                        </button>
-                    </div>
-
-                </div>
             </div>
-        </div>
     </div>
 
     <!-- Modal -->
@@ -76,4 +82,5 @@
     <script src="/r76engine.js"></script>
     <script src="/js/pages/test-plan.js"></script>
 </body>
+
 </html>

@@ -20,10 +20,12 @@ const ReportSchema = new mongoose.Schema({
     form_tilt_results: mongoose.Schema.Types.Mixed,
     
     // New fields for the updated flow
-    lab_details:       mongoose.Schema.Types.Mixed,
-    instrument_photo:  String, // base64
-    rule_set_version:  String, // e.g. "OIML R76 V1"
-    createdBy:         String, // username of tester
+    lab_details:             mongoose.Schema.Types.Mixed,
+    instrument_photo:        String, // base64 (legacy fallback)
+    administrative_evidence: mongoose.Schema.Types.Mixed, // { photos: { front, nameplate, rear_side }, docs: { spec, manual, drawing } }
+    evidence_register:       mongoose.Schema.Types.Mixed, // Array of registered evidence items
+    rule_set_version:        String, // e.g. "OIML R76 V1"
+    createdBy:               String, // username of tester
 
     createdAt:         { type: Date, default: Date.now }
 });

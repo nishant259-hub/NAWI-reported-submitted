@@ -1,6 +1,6 @@
 /* report.css */
 .report-page {
-    font-family: 'IBM Plex Sans', sans-serif;
+    font-family: var(--font-body);
     color: var(--color-ink);
     max-width: 800px;
     margin: 0 auto;
@@ -16,16 +16,16 @@
 }
 
 .report-header {
-    background: #f0f6ff;
+    background: #F4F5F7;
     padding: 24px 32px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 2px solid #dde8f5;
+    border-bottom: 2px solid var(--color-line);
 }
 .report-header h2 {
     margin: 0;
-    color: var(--color-teal-dark);
+    color: var(--color-ink);
     font-family: var(--font-display);
     font-size: 24px;
     letter-spacing: 0.5px;
@@ -35,7 +35,7 @@
     font-size: 18px;
     font-weight: 700;
     color: var(--color-teal);
-    background: #e6f6f5;
+    background: rgba(242, 159, 103, 0.12);
     padding: 6px 12px;
     border-radius: 6px;
 }
@@ -94,14 +94,14 @@
     align-items: center;
     gap: 8px;
 }
-.pass-text { color: #28c76f; }
-.fail-text { color: #e74c3c; }
+.pass-text { color: var(--color-pass); }
+.fail-text { color: var(--color-fail); }
 
 .overall-result {
     padding: 32px;
     text-align: center;
     border-top: 1px dashed var(--color-line);
-    background: #fafafa;
+    background: #FAFAFA;
 }
 .overall-result h4 {
     margin: 0 0 16px 0;
@@ -119,8 +119,8 @@
     margin-bottom: 16px;
     font-family: var(--font-display);
 }
-.result-pass { background: #e6f6f5; color: #0E7C86; border: 2px solid #b3e6e1;}
-.result-fail { background: #fdf3f2; color: #e74c3c; border: 2px solid #f9cdce;}
+.result-pass { background: rgba(52, 177, 170, 0.12); color: var(--color-pass); border: 2px solid rgba(52, 177, 170, 0.3);}
+.result-fail { background: rgba(231, 76, 60, 0.12); color: var(--color-fail); border: 2px solid rgba(231, 76, 60, 0.3);}
 
 .result-stats {
     font-size: 15px;
@@ -194,7 +194,7 @@
 
 /* report-detailed.css extensions */
 .detailed-page {
-    font-family: 'IBM Plex Sans', sans-serif;
+    font-family: var(--font-body);
     color: var(--color-ink);
     max-width: 1000px;
     margin: 0 auto;
@@ -208,7 +208,7 @@
 }
 .header-bar h1 {
     margin: 0;
-    color: var(--color-teal-dark);
+    color: var(--color-ink);
     font-family: var(--font-display);
     font-size: 24px;
 }
@@ -224,8 +224,8 @@
 .table-card h3 {
     margin: 0;
     padding: 20px 24px;
-    background: #f8faff;
-    color: var(--color-teal-dark);
+    background: #F4F5F7;
+    color: var(--color-ink);
     border-bottom: 1px solid var(--color-line-soft);
     display: flex;
     align-items: center;
@@ -264,7 +264,7 @@
 }
 .mpe-text {
     font-family: monospace;
-    color: #0E7C86;
+    color: var(--color-teal);
     font-weight: 600;
 }
 .err-text {

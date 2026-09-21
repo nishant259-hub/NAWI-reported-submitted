@@ -22,15 +22,21 @@
                         <div class="page-header">
                             <h2>Automatic Test Planner</h2>
                             <p>Generate a standards-driven test plan from your instrument specifications.</p>
-                            
+
                             <!-- Display Active Rule Set -->
-                            <div id="active-rule-banner" style="margin-top: 14px; padding: 12px 18px; background: #f0fdfa; border: 1.5px solid var(--brand); border-radius: 8px; display: none;">
-                                <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px;">
+                            <div id="active-rule-banner"
+                                style="margin-top: 14px; padding: 12px 18px; background: #f0fdfa; border: 1.5px solid var(--brand); border-radius: 8px; display: block;">
+                                <div
+                                    style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px;">
                                     <div style="display:flex; align-items:center; gap:10px;">
-                                        <span style="background:var(--brand); color:white; font-size:0.75rem; font-weight:700; padding:3px 10px; border-radius:12px; letter-spacing:0.5px;">
+                                        <span
+                                            style="background:var(--brand); color:rgb(65, 9, 9); font-size:0.75rem; font-weight:700; padding:3px 10px; border-radius:12px; letter-spacing:0.5px;">
                                             <i class="fas fa-check-circle"></i> ACTIVE RULE SET
                                         </span>
-                                        <span style="font-weight:700; color:var(--brand-dark); font-size:0.95rem;" id="rule-set-name">OIML R-76 V1</span>
+                                        <span style="font-weight:700; color:var(--brand-dark); font-size:0.95rem;"
+                                            id="rule-set-name">
+                                            <%= (typeof activeRule !=='undefined' && activeRule) ? activeRule : 'OIML R-76 V1' %>
+                                        </span>
                                     </div>
                                     <span style="font-size:0.8rem; color:#0f766e; font-weight:500;">
                                         Governing MPE, Repeatability, Tare & Eccentricity for this test
@@ -43,7 +49,8 @@
                             <h3>1. Instrument Specifications</h3>
 
                             <form id="initial-form">
-                                <input type="hidden" id="rule_set_version" name="rule_set_version" value="OIML R-76 V1">
+                                <input type="hidden" id="rule_set_version" name="rule_set_version"
+                                    value="<%= (typeof activeRule !== 'undefined' && activeRule) ? activeRule : 'OIML R-76 V1' %>">
 
                                 <div class="form-group">
                                     <label>Instrument Type</label>
@@ -58,10 +65,10 @@
                                 <div class="form-group">
                                     <label>Accuracy Class</label>
                                     <select name="Class_value" id="ClassValue" class="form-input" required>
-                                        <option value="class I">Class I (laboratory machine )</option>
-                                        <option value="class II">Class II (special accuracy machine )</option>
-                                        <option value="class III" selected>Class III (commercial machine)</option>
-                                        <option value="class IIII">Class IIII (weighing scale machine )</option>
+                                        <option value="class I">Class I (Special Accuracy )</option>
+                                        <option value="class II">Class II (High Accuracy)</option>
+                                        <option value="class III" selected>Class III (Medium Accuracy)</option>
+                                        <option value="class IIII">Class IIII (Ordinary Accuracy)</option>
                                     </select>
                                 </div>
 
@@ -115,31 +122,112 @@
 
                                 <div class="form-group">
                                     <label>Serial No.</label>
-                                    <input type="text" name="serial_no" placeholder="e.g. SN-987654321" class="form-input"
-                                        required>
+                                    <input type="text" name="serial_no" placeholder="e.g. SN-987654321"
+                                        class="form-input" required>
                                 </div>
 
-                                <div class="form-group">
-                                    <label>Instrument Photo (Optional)</label>
-                                    <input type="file" id="instrument_photo" accept="image/*" class="form-input">
+                                <!-- OIML R 76 Administrative Evidence Section -->
+                                <div
+                                    style="margin-top: 25px; padding: 18px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px;">
+                                    <h4
+                                        style="margin: 0 0 6px 0; color: var(--brand-dark); font-size: 1rem; display: flex; align-items: center; gap: 8px;">
+                                        <i class="fas fa-folder-open" style="color: var(--brand);"></i> Instrument &
+                                        Administrative Evidence
+                                    </h4>
+                                    <p style="margin: 0 0 16px 0; font-size: 0.85rem; color: #64748b;">
+                                        Supporting Evidence — Attach relevant photographs and documents for the
+                                        instrument and applicable tests.
+                                    </p>
+
+                                    <!-- Instrument Photographs -->
+                                    <div style="margin-bottom: 16px;">
+                                        <label
+                                            style="font-weight: 600; font-size: 0.88rem; color: #334155; margin-bottom: 8px; display: block;">
+                                            <i class="fas fa-camera" style="color: var(--brand);"></i> Instrument
+                                            Photographs
+                                        </label>
+                                        <div
+                                            style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px;">
+                                            <div>
+                                                <span
+                                                    style="font-size: 0.78rem; color: #64748b; font-weight: 500;">Front
+                                                    View</span>
+                                                <input type="file" id="photo_front" accept="image/*" class="form-input"
+                                                    style="padding: 6px;">
+                                            </div>
+                                            <div>
+                                                <span
+                                                    style="font-size: 0.78rem; color: #64748b; font-weight: 500;">Nameplate
+                                                    / Markings</span>
+                                                <input type="file" id="photo_nameplate" accept="image/*"
+                                                    class="form-input" style="padding: 6px;">
+                                            </div>
+                                            <div>
+                                                <span style="font-size: 0.78rem; color: #64748b; font-weight: 500;">Rear
+                                                    / Side View</span>
+                                                <input type="file" id="photo_rear_side" accept="image/*"
+                                                    class="form-input" style="padding: 6px;">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Supporting Documents -->
+                                    <div>
+                                        <label
+                                            style="font-weight: 600; font-size: 0.88rem; color: #334155; margin-bottom: 8px; display: block;">
+                                            <i class="fas fa-file-pdf" style="color: var(--brand);"></i> Supporting
+                                            Documents
+                                        </label>
+                                        <div
+                                            style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px;">
+                                            <div>
+                                                <span
+                                                    style="font-size: 0.78rem; color: #64748b; font-weight: 500;">Technical
+                                                    Specification</span>
+                                                <input type="file" id="doc_tech_spec" accept=".pdf,.doc,.docx"
+                                                    class="form-input" style="padding: 6px;">
+                                            </div>
+                                            <div>
+                                                <span
+                                                    style="font-size: 0.78rem; color: #64748b; font-weight: 500;">Operating
+                                                    Manual</span>
+                                                <input type="file" id="doc_operating_manual" accept=".pdf,.doc,.docx"
+                                                    class="form-input" style="padding: 6px;">
+                                            </div>
+                                            <div>
+                                                <span
+                                                    style="font-size: 0.78rem; color: #64748b; font-weight: 500;">Drawing
+                                                    (Where applicable)</span>
+                                                <input type="file" id="doc_drawing" accept=".pdf,.doc,.docx,image/*"
+                                                    class="form-input" style="padding: 6px;">
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
 
-                                <h3 style="margin-top: 30px; margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 10px;">2. Laboratory Details</h3>
-                                
+                                <h3
+                                    style="margin-top: 30px; margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 10px;">
+                                    2. Laboratory Details</h3>
+
                                 <div class="form-group">
                                     <label>Laboratory Name</label>
-                                    <input type="text" name="lab_name" placeholder="e.g. National Metrology Lab" class="form-input" required>
+                                    <input type="text" name="lab_name" placeholder="e.g. National Metrology Lab"
+                                        class="form-input" required>
                                 </div>
                                 <div class="form-group">
                                     <label>Location / State</label>
-                                    <input type="text" name="lab_location" placeholder="e.g. New Delhi, Delhi" class="form-input" required>
+                                    <input type="text" name="lab_location" placeholder="e.g. New Delhi, Delhi"
+                                        class="form-input" required>
                                 </div>
                                 <div class="form-group">
                                     <label>Testing Environment</label>
                                     <div style="display: flex; gap: 10px;">
-                                        <input type="number" name="temperature" placeholder="Temp °C" class="form-input" value="20" required>
-                                        <input type="number" name="humidity" placeholder="Humidity %" class="form-input" value="50" required>
-                                        <input type="number" name="voltage" placeholder="Voltage V" class="form-input" value="220" required>
+                                        <input type="number" name="temperature" placeholder="Temp °C" class="form-input"
+                                            value="20" required>
+                                        <input type="number" name="humidity" placeholder="Humidity %" class="form-input"
+                                            value="50" required>
+                                        <input type="number" name="voltage" placeholder="Voltage V" class="form-input"
+                                            value="220" required>
                                     </div>
                                 </div>
 
@@ -160,7 +248,7 @@
         fetch('/api/rules/active')
             .then(res => res.json())
             .then(data => {
-                if(data && data.version_name) {
+                if (data && data.version_name) {
                     document.getElementById('active-rule-banner').style.display = 'block';
                     document.getElementById('rule-set-name').innerText = data.version_name;
                     document.getElementById('rule_set_version').value = data.version_name;

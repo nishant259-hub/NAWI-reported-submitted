@@ -1,5 +1,5 @@
         .dashboard-home {
-            font-family: 'IBM Plex Sans', sans-serif;
+            font-family: var(--font-body);
             color: var(--color-ink);
         }
         .greeting {
@@ -9,7 +9,7 @@
             font-family: var(--font-display);
             font-size: 28px;
             margin: 0 0 8px 0;
-            color: var(--color-teal-dark);
+            color: var(--color-ink);
         }
         .greeting p {
             color: var(--color-muted);
@@ -66,7 +66,7 @@
         .panel h3 {
             margin: 0 0 20px 0;
             font-size: 18px;
-            color: var(--color-teal-dark);
+            color: var(--color-ink);
             border-bottom: 1px solid var(--color-line-soft);
             padding-bottom: 12px;
         }
@@ -97,9 +97,9 @@
             font-size: 12px;
             font-weight: 700;
         }
-        .status-pass { background: #e6f6f5; color: #0E7C86; }
-        .status-fail { background: #fdf3f2; color: #e74c3c; }
-        .status-pending { background: #fff5e6; color: #f39c12; }
+        .status-pass { background: rgba(52, 177, 170, 0.12); color: var(--color-pass); }
+        .status-fail { background: rgba(231, 76, 60, 0.12); color: var(--color-fail); }
+        .status-pending { background: rgba(224, 181, 15, 0.15); color: #B28F05; }
 
         .quick-actions {
             display: flex;
@@ -111,17 +111,17 @@
             align-items: center;
             gap: 12px;
             padding: 14px 16px;
-            background: #f8faff;
-            border: 1px solid #dde8f5;
+            background: #F8F9FA;
+            border: 1px solid var(--color-line);
             border-radius: 8px;
-            color: var(--color-teal-dark);
+            color: var(--color-ink);
             text-decoration: none;
             font-weight: 600;
             transition: all 0.2s;
         }
         .action-btn:hover {
-            background: #eef4ff;
-            border-color: #c5d8f0;
+            background: #F4F5F7;
+            border-color: #DCDFE6;
         }
         .action-btn i {
             color: var(--color-teal);
@@ -139,7 +139,7 @@
         }
 
         .pending-panel {
-            background: linear-gradient(135deg, #0E7C86, #084c53);
+            background: linear-gradient(135deg, #1E1E2C 0%, #2D2D42 100%);
             color: #fff;
             border-radius: 12px;
             padding: 24px;
@@ -154,19 +154,20 @@
         }
         .pending-info p {
             margin: 0;
-            color: rgba(255, 255, 255, 0.95);
+            color: rgba(255, 255, 255, 0.85);
             font-size: 15px;
             font-weight: 500;
         }
         .pending-panel .btn {
-            background: #5df09f;
-            color: #084c53;
+            background: var(--color-teal);
+            color: #ffffff;
             border: none;
             padding: 10px 20px;
             font-weight: 700;
+            border-radius: 8px;
         }
         .pending-panel .btn:hover {
-            background: #4ae38c;
+            background: var(--color-teal-dark);
         }
 
 /* =========================================================================

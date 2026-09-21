@@ -37,6 +37,20 @@
                             </div>
                         </div>
 
+                        <!-- OIML R 76-2 Evidence Summary Badge -->
+                        <% const evCount = (report.evidence_register && report.evidence_register.length) ? report.evidence_register.length : (report.instrument_photo ? 1 : 0); %>
+                        <div style="margin: 16px 0; padding: 12px 16px; background: #f8fafc; border-left: 4px solid var(--brand, #F29F67); border-radius: 4px; display: flex; align-items: center; justify-content: space-between;">
+                            <div>
+                                <strong style="font-size: 0.9rem; color: #1e293b;"><i class="fas fa-folder-open" style="color: var(--brand, #F29F67);"></i> OIML R 76-2 Evidence Register</strong>
+                                <p style="margin: 2px 0 0 0; font-size: 0.8rem; color: #64748b;">
+                                    <%= evCount %> registered administrative photo(s), document(s) & test setup evidence items.
+                                </p>
+                            </div>
+                            <span style="background: #e2e8f0; color: #0f172a; font-size: 0.78rem; font-weight: 700; padding: 4px 10px; border-radius: 12px;">
+                                <%= evCount %> Item(s)
+                            </span>
+                        </div>
+
                         <div class="test-list-header">TEST RESULTS</div>
 
                         <% if (testStatus.visual) { %>
@@ -138,7 +152,7 @@
 
                         <div class="action-footer">
                             <a href="/report-detailed?id=<%= report._id %>"><button class="btn btn-secondary"><i class="fas fa-list"></i> View Detailed Results</button></a>
-                            <button class="btn" style="background:#0E7C86;" onclick="window.open('/certificate?id=<%= report._id %>', '_blank')"><i class="fas fa-file-pdf"></i> Generate Report</button>
+                            <button class="btn" style="background:#3B8FF3;" onclick="window.open('/certificate?id=<%= report._id %>', '_blank')"><i class="fas fa-file-pdf"></i> Generate Report</button>
                         </div>
                     </div>
                 </div>

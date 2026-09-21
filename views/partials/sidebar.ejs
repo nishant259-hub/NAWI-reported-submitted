@@ -4,29 +4,35 @@
         <div class="brand-text">NAWI <span>REPORTED</span></div>
     </div>
     <div class="sidebar-nav">
-        <% if (typeof userRole !== 'undefined' && userRole === 'admin') { %>
+        <% if (typeof userRole !=='undefined' && userRole==='admin' ) { %>
             <!-- ADMIN NAV -->
             <a href="/admin" class="nav-item"><i class="fas fa-user-shield"></i> <span>Admin Dashboard</span></a>
             <a href="/history" class="nav-item"><i class="fas fa-history"></i> <span>All Reports</span></a>
-        <% } else { %>
-            <!-- TESTER NAV -->
-            <a href="/home" class="nav-item"><i class="fas fa-th-large"></i> <span>Dashboard</span></a>
-            <a href="/new-test" class="nav-item"><i class="fas fa-plus"></i> <span>New Test</span></a>
-            <a href="/test-plan" class="nav-item" id="nav-test-plan"><i class="fas fa-clipboard-list"></i> <span id="lbl-test-plan">Test Planner</span></a>
-            <a href="/tests" class="nav-item" id="nav-tests"><i class="fas fa-flask"></i> <span id="lbl-tests">Test Execution</span></a>
-            <a href="/history" class="nav-item"><i class="fas fa-history"></i> <span>History</span></a>
-        <% } %>
+            <% } else { %>
+                <!-- TESTER NAV -->
+                <a href="/home" class="nav-item"><i class="fas fa-th-large"></i> <span>Dashboard</span></a>
+                <a href="/new-test" class="nav-item"><i class="fas fa-plus"></i> <span>New Test</span></a>
+                <a href="/test-plan" class="nav-item" id="nav-test-plan"><i class="fas fa-clipboard-list"></i> <span
+                        id="lbl-test-plan">Test Planner</span></a>
+                <a href="/tests" class="nav-item" id="nav-tests"><i class="fas fa-flask"></i> <span id="lbl-tests">Test
+                        Execution</span></a>
+                <a href="/history" class="nav-item"><i class="fas fa-history"></i> <span>History</span></a>
+                <% } %>
     </div>
 
     <!-- User info + Logout at bottom -->
     <div class="sidebar-user">
         <div class="sidebar-user-info">
             <div class="sidebar-avatar">
-                <%= (typeof username !== 'undefined' && username) ? username.charAt(0).toUpperCase() : 'U' %>
+                <%= (typeof username !=='undefined' && username) ? username.charAt(0).toUpperCase() : 'U' %>
             </div>
             <div>
-                <div class="sidebar-username"><%= (typeof username !== 'undefined' && username) ? username : 'User' %></div>
-                <div class="sidebar-role"><%= (typeof userRole !== 'undefined' && userRole === 'admin') ? 'Administrator' : 'Tester' %></div>
+                <div class="sidebar-username">
+                    <%= (typeof username !=='undefined' && username) ? username : 'User' %>
+                </div>
+                <div class="sidebar-role">
+                    <%= (typeof userRole !=='undefined' && userRole==='admin' ) ? 'Administrator' : 'Tester' %>
+                </div>
             </div>
         </div>
         <a href="/logout" class="sidebar-logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
@@ -36,20 +42,22 @@
 <style>
     .sidebar-user {
         padding: 16px;
-        border-top: 1px solid rgba(255,255,255,0.06);
+        border-top: 1px solid rgba(183, 111, 11, 0.06);
         margin-top: auto;
     }
+
     .sidebar-user-info {
         display: flex;
         align-items: center;
         gap: 10px;
         margin-bottom: 12px;
     }
+
     .sidebar-avatar {
         width: 34px;
         height: 34px;
         border-radius: 50%;
-        background: linear-gradient(135deg, var(--brand, #0d9488), #7c3aed);
+        background: linear-gradient(135deg, #F29F67, #3B8FF3);
         display: grid;
         place-items: center;
         color: white;
@@ -57,15 +65,18 @@
         font-size: 0.875rem;
         flex-shrink: 0;
     }
+
     .sidebar-username {
         color: white;
         font-size: 0.875rem;
         font-weight: 600;
     }
+
     .sidebar-role {
         color: #94a3b8;
         font-size: 0.72rem;
     }
+
     .sidebar-logout {
         display: flex;
         align-items: center;
@@ -79,6 +90,7 @@
         transition: background 0.15s;
         width: 100%;
     }
+
     .sidebar-logout:hover {
         background: rgba(239, 68, 68, 0.1);
         color: #fca5a5;
@@ -86,7 +98,7 @@
 </style>
 
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
+    document.addEventListener("DOMContentLoaded", function () {
         const path = window.location.pathname;
         const navItems = document.querySelectorAll(".sidebar-nav .nav-item");
         navItems.forEach(item => {
@@ -96,7 +108,7 @@
                 item.classList.remove("active");
             }
         });
-        
+
         // Handle Planner and Execution links if no test is active
         const planBtn = document.getElementById("nav-test-plan");
         const testBtn = document.getElementById("nav-tests");
@@ -110,7 +122,7 @@
                 toast.id = "global-toast";
                 toast.innerHTML = `
                     <div style="color: #e74c3c; font-size: 22px;"><i class="fas fa-exclamation-circle"></i></div>
-                    <div id="toast-msg" style="color: #0B2A3B; font-family: 'IBM Plex Sans', sans-serif; font-weight: 500; font-size: 14px;"></div>
+                    <div id="toast-msg" style="color: #1E1E2C; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 500; font-size: 14px;"></div>
                 `;
                 Object.assign(toast.style, {
                     position: "fixed", bottom: "-100px", right: "32px", background: "#fff",
@@ -121,7 +133,7 @@
                 document.body.appendChild(toast);
             }
             document.getElementById("toast-msg").textContent = message;
-            
+
             // Trigger animation
             setTimeout(() => { toast.style.bottom = "32px"; }, 10);
             setTimeout(() => { toast.style.bottom = "-100px"; }, 4000);
@@ -129,13 +141,13 @@
 
         if (!localStorage.getItem("InstrumentData")) {
             // No test active: allow click but show toast and block navigation
-            const blockNav = function(e) {
+            const blockNav = function (e) {
                 e.preventDefault();
                 showToast("No active test session found. Please start a new test to proceed.");
             };
             if (planBtn) { planBtn.addEventListener("click", blockNav); }
             if (testBtn) { testBtn.addEventListener("click", blockNav); }
-            
+
             // If they somehow land directly on the page, kick them back to new-test
             if (path === '/test-plan' || path === '/tests') {
                 window.location.href = "/new-test";

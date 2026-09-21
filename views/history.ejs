@@ -87,11 +87,7 @@
                             </thead>
                             <tbody>
                                 <% if (reports && reports.length > 0) { %>
-                                    <% reports.forEach(r => { 
-                                        const dateObj = new Date(r.createdAt);
-                                        const dateStr = dateObj.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
-                                        const filterDate = dateObj.toISOString().split('T')[0];
-                                    %>
+                                    <% reports.forEach(r => {  const dateObj = new Date(r.createdAt); const dateStr = dateObj.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }); const filterDate = dateObj.toISOString().split('T')[0]; %>
                                         <tr onclick="window.location.href='/report?id=<%= r._id %>'" 
                                             data-search="<%= r._id.toString().substring(0,8).toUpperCase() %> <%= (r.instrument_id || '').toUpperCase() %> <%= (r.serial_no || '').toUpperCase() %>"
                                             data-status="<%= r.status %>"

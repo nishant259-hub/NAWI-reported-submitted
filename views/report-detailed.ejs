@@ -22,7 +22,7 @@
                     <div class="header-bar">
                         <h1>Detailed Test Analysis</h1>
                         <div style="display: flex; gap: 12px;">
-                            <button class="btn" style="background:#0E7C86;" onclick="window.open('/certificate?id=<%= report._id %>', '_blank')"><i class="fas fa-file-pdf"></i> Save as PDF</button>
+                            <button class="btn" style="background:#3B8FF3;" onclick="window.open('/certificate?id=<%= report._id %>', '_blank')"><i class="fas fa-file-pdf"></i> Save as PDF</button>
                             <a href="/report?id=<%= report._id %>"><button class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Back to Summary</button></a>
                         </div>
                     </div>
@@ -43,11 +43,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <% Object.values(report.form1_results).forEach(row => { 
-                                        if(row.load_g !== undefined) { 
-                                            const ascFail = row.asc_status === 'FAIL';
-                                            const descFail = row.desc_status === 'FAIL';
-                                    %>
+                                    <% Object.values(report.form1_results).forEach(row => {  if(row.load_g !== undefined) {  const ascFail = row.asc_status === 'FAIL'; const descFail = row.desc_status === 'FAIL'; %>
                                         <tr class="<%= ascFail ? 'highlight-fail' : '' %>">
                                             <td rowspan="2" style="border-bottom: 2px solid var(--color-line); font-weight:700;"><%= row.load_g %></td>
                                             <td>Ascending</td>
@@ -124,9 +120,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <% if (report.form3_results.details) { Object.entries(report.form3_results.details).forEach(([pos, data]) => { 
-                                        const eFail = data.result === 'FAIL';
-                                    %>
+                                    <% if (report.form3_results.details) { Object.entries(report.form3_results.details).forEach(([pos, data]) => {  const eFail = data.result === 'FAIL'; %>
                                         <tr class="<%= eFail ? 'highlight-fail' : '' %>">
                                             <td style="text-transform: capitalize;"><%= pos %></td>
                                             <td><%= data.appliedLoad %></td>
@@ -145,17 +139,7 @@
                     <% } %>
 
                     <!-- Zero, Tare, Tilt -->
-                    <% 
-                    const simpleTests = [
-                        { name: "Zero-Setting", icon: "bullseye", data: report.form_zero_results, resKey: "ZeroSetting" },
-                        { name: "Tare Accuracy", icon: "balance-scale", data: report.form_tare_results, resKey: "TareAccuracy" },
-                        { name: "Tilt Test", icon: "arrows-alt", data: report.form_tilt_results, resKey: "TiltTest" }
-                    ];
-                    
-                    simpleTests.forEach(test => {
-                        if (test.data) {
-                            const fail = test.data[test.resKey] === 'FAIL';
-                    %>
+                    <%  const simpleTests = [ { name: "Zero-Setting", icon: "bullseye", data: report.form_zero_results, resKey: "ZeroSetting" }, { name: "Tare Accuracy", icon: "balance-scale", data: report.form_tare_results, resKey: "TareAccuracy" }, { name: "Tilt Test", icon: "arrows-alt", data: report.form_tilt_results, resKey: "TiltTest" } ]; simpleTests.forEach(test => { if (test.data) { const fail = test.data[test.resKey] === 'FAIL'; %>
                         <div class="table-card">
                             <h3><i class="fas fa-<%= test.icon %>"></i> <%= test.name %></h3>
                             <table>
@@ -181,6 +165,55 @@
                             </table>
                         </div>
                     <% }}); %>
+
+                    <!-- Evidence Register (OIML R 76-2) -->
+                    <div class="table-card" style="margin-top: 30px;">
+                        <h3><i class="fas fa-folder-open"></i> Evidence Register (OIML R 76-2)</h3>
+                        <p style="font-size: 0.85rem; color: #64748b; margin-top: -8px; margin-bottom: 16px;">
+                            Standardized log of instrument administrative evidence & test-specific supporting documentation.
+                        </p>
+
+                        <%  let evReg = report.evidence_register || []; if (evReg.length === 0 && report.instrument_photo) { evReg = [{ id: "EV-001", type: "Photo", description: "Instrument Front Photo", related_test: "General / Administrative", file_data: report.instrument_photo }]; } %>
+
+                        <% if (evReg.length > 0) { %>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Evidence ID</th>
+                                        <th>Type</th>
+                                        <th>Description</th>
+                                        <th>Related Test</th>
+                                        <th>Attachment / Preview</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% evReg.forEach(item => { %>
+                                        <tr>
+                                            <td><strong style="color: var(--brand, #0b4f5c);"><%= item.id %></strong></td>
+                                            <td>
+                                                <span class="badge" style="background: #e2e8f0; color: #334155; font-size: 0.75rem; padding: 2px 8px; border-radius: 4px;">
+                                                    <%= item.type %>
+                                                </span>
+                                            </td>
+                                            <td><%= item.description %></td>
+                                            <td><%= item.related_test %></td>
+                                            <td>
+                                                <% if (item.file_data && item.file_data.startsWith("data:image")) { %>
+                                                    <img src="<%= item.file_data %>" alt="Evidence thumbnail" style="max-height: 48px; max-width: 80px; border-radius: 4px; border: 1px solid #cbd5e1; vertical-align: middle;">
+                                                <% } else if (item.filename) { %>
+                                                    <span style="font-size: 0.82rem; color: #0284c7;"><i class="fas fa-paperclip"></i> <%= item.filename %></span>
+                                                <% } else { %>
+                                                    <span style="font-size: 0.82rem; color: #94a3b8;">Document Attached</span>
+                                                <% } %>
+                                            </td>
+                                        </tr>
+                                    <% }) %>
+                                </tbody>
+                            </table>
+                        <% } else { %>
+                            <p style="font-size: 0.88rem; color: #94a3b8; font-style: italic; padding: 10px 0;">No evidence items registered for this test evaluation.</p>
+                        <% } %>
+                    </div>
 
                 </div>
             </div>

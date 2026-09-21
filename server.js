@@ -14,6 +14,19 @@ app.use(express.json({ limit: "10mb" })); // Increased limit for base64 photo
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static("public"));
+// Custom EJS rendering engine that automatically flattens split EJS tags
+const ejs = require("ejs");
+app.engine("ejs", (filePath, options, callback) => {
+    try {
+        const fs = require("fs");
+        let content = fs.readFileSync(filePath, "utf8");
+        content = content.replace(/<%[\s\S]*?%>/g, (m) => m.replace(/[\r\n]+\s*/g, " "));
+        const html = ejs.render(content, Object.assign({}, options, { filename: filePath }));
+        callback(null, html);
+    } catch (err) {
+        callback(err);
+    }
+});
 app.set("view engine", "ejs");
 
 // Basic Authentication Middleware
@@ -62,6 +75,8 @@ app.post("/api/save-report", authMiddleware, async (req, res) => {
             form_tilt, form_tilt_results,
             lab_details,
             instrument_photo,
+            administrative_evidence,
+            evidence_register,
             rule_set_version
         } = req.body;
 
@@ -89,6 +104,8 @@ app.post("/api/save-report", authMiddleware, async (req, res) => {
             form_tilt_results,
             lab_details,
             instrument_photo,
+            administrative_evidence,
+            evidence_register,
             rule_set_version,
             createdBy: req.username
         });
@@ -233,8 +250,30 @@ app.get("/home", authMiddleware, testerOnly, async (req, res) => {
         res.render("home", { total: 0, passed: 0, failed: 0, recentTests: [] });
     }
 });
-app.get("/new-test",  authMiddleware, testerOnly, (req, res) => res.render("new-test"));
-app.get("/test-plan", authMiddleware, testerOnly, (req, res) => res.render("test-plan"));
+app.get("/new-test",  authMiddleware, testerOnly, async (req, res) => {
+    try {
+        let activeRule = await RuleSet.findOne({ isActive: true });
+        if (!activeRule) {
+            activeRule = await RuleSet.findOne({ version_name: "OIML R-76 V1" });
+        }
+        const activeRuleName = activeRule ? activeRule.version_name : "OIML R-76 V1";
+        res.render("new-test", { activeRule: activeRuleName });
+    } catch (err) {
+        res.render("new-test", { activeRule: "OIML R-76 V1" });
+    }
+});
+app.get("/test-plan", authMiddleware, testerOnly, async (req, res) => {
+    try {
+        let activeRule = await RuleSet.findOne({ isActive: true });
+        if (!activeRule) {
+            activeRule = await RuleSet.findOne({ version_name: "OIML R-76 V1" });
+        }
+        const activeRuleName = activeRule ? activeRule.version_name : "OIML R-76 V1";
+        res.render("test-plan", { activeRule: activeRuleName });
+    } catch (err) {
+        res.render("test-plan", { activeRule: "OIML R-76 V1" });
+    }
+});
 app.get("/tests",     authMiddleware, testerOnly, (req, res) => res.render("tests"));
 app.get("/report",    authMiddleware, async (req, res) => {
     try {

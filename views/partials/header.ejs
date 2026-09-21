@@ -76,14 +76,14 @@
                 <span class="user-name">
                     <%= (typeof username !== 'undefined' && username) ? username : 'User' %>
                     <% if (typeof userRole !== 'undefined' && userRole === 'admin') { %>
-                        <span style="font-size:10px; background:#0d9488; color:white; padding:1px 6px; border-radius:10px; margin-left:4px; vertical-align:middle;">ADMIN</span>
+                        <span style="font-size:10px; background:#F29F67; color:white; padding:1px 6px; border-radius:10px; margin-left:4px; vertical-align:middle;">ADMIN</span>
                     <% } %>
                     <i class="fas fa-caret-down" style="font-size: 12px; margin-left: 4px; color: #8ba3b8;"></i>
                 </span>
             </div>
             <div class="dropdown-content">
                 <% if (typeof userRole !== 'undefined' && userRole === 'admin') { %>
-                    <a href="/admin" style="color: #0d9488;"><i class="fas fa-user-shield"></i> Admin Panel</a>
+                    <a href="/admin" style="color: #F29F67;"><i class="fas fa-user-shield"></i> Admin Panel</a>
                 <% } %>
                 <a href="/logout" onclick="localStorage.removeItem('InstrumentData');"><i class="fas fa-sign-out-alt"></i> Logout</a>
             </div>

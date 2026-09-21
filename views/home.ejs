@@ -14,83 +14,99 @@
 <body>
     <div class="app-wrapper">
         <%- include('partials/sidebar') %>
-        <div class="app-main">
-            <%- include('partials/header') %>
-            <div class="app-content">
-                <div class="dashboard-home">
-                    
-                    <div class="greeting">
-                        <h1>Good morning, <%= (typeof username !== 'undefined' && username) ? username : 'Nishant' %></h1>
-                        <p>Here's your testing overview</p>
-                    </div>
+            <div class="app-main">
+                <%- include('partials/header') %>
+                    <div class="app-content">
+                        <div class="dashboard-home">
 
-                    <div class="stats-grid">
-                        <div class="stat-card">
-                            <h2><%= total %></h2>
-                            <p>Total Tests</p>
-                        </div>
-                        <div class="stat-card">
-                            <h2 style="color: #28c76f;"><%= passed %></h2>
-                            <p>Passed</p>
-                        </div>
-                        <div class="stat-card">
-                            <h2 id="pending-count" style="color: #f39c12;">0</h2>
-                            <p>Pending</p>
-                        </div>
-                        <div class="stat-card">
-                            <h2 style="color: #e74c3c;"><%= failed %></h2>
-                            <p>Failed</p>
-                        </div>
-                    </div>
-
-                    <div class="main-grid">
-                        <div class="panel">
-                            <h3>Recent Tests</h3>
-                            <% if (recentTests && recentTests.length > 0) { %>
-                                <ul class="recent-list">
-                                    <% recentTests.forEach(test => { %>
-                                        <li>
-                                            <span class="test-id"><%= test.name %> <span style="color:#aaa; font-size:12px;">(<%= test.id %>)</span></span>
-                                            <% if (test.status === 'PASS') { %>
-                                                <span class="status-badge status-pass">PASS</span>
-                                            <% } else { %>
-                                                <span class="status-badge status-fail">FAIL</span>
-                                            <% } %>
-                                        </li>
-                                    <% }) %>
-                                </ul>
-                            <% } else { %>
-                                <p style="color: var(--color-muted); font-size: 14px; text-align: center; padding: 20px 0;">No tests completed yet.</p>
-                            <% } %>
-                        </div>
-                        
-                        <div class="panel">
-                            <h3>Quick Actions</h3>
-                            <div class="quick-actions">
-                                <a href="/new-test" class="action-btn primary">
-                                    <i class="fas fa-plus"></i> New Test
-                                </a>
-                                <a href="/test-plan" class="action-btn">
-                                    <i class="fas fa-tasks"></i> Test Planner
-                                </a>
-                                <a href="/history" class="action-btn">
-                                    <i class="fas fa-folder-open"></i> View History
-                                </a>
+                            <div class="greeting">
+                                <h1>Good morning, <%= (typeof username !=='undefined' && username) ? username : 'Nishant' %>
+                                </h1>
+                                <p>Here's your testing overview</p>
                             </div>
+
+                            <div class="stats-grid">
+                                <div class="stat-card">
+                                    <h2 style="color: #1E1E2C;">
+                                        <%= total %>
+                                    </h2>
+                                    <p>Total Tests</p>
+                                </div>
+                                <div class="stat-card">
+                                    <h2 style="color: #34B1AA;">
+                                        <%= passed %>
+                                    </h2>
+                                    <p>Passed</p>
+                                </div>
+                                <div class="stat-card">
+                                    <h2 id="pending-count" style="color: #E0B50F;">0</h2>
+                                    <p>Pending</p>
+                                </div>
+                                <div class="stat-card">
+                                    <h2 style="color: #E74C3C;">
+                                        <%= failed %>
+                                    </h2>
+                                    <p>Failed</p>
+                                </div>
+                            </div>
+
+                            <div class="main-grid">
+                                <div class="panel">
+                                    <h3>Recent Tests</h3>
+                                    <% if (recentTests && recentTests.length> 0) { %>
+                                        <ul class="recent-list">
+                                            <% recentTests.forEach(test=> { %>
+                                                <li>
+                                                    <span class="test-id">
+                                                        <%= test.name %> <span style="color:#aaa; font-size:12px;">(<%= test.id %>)</span>
+                                                    </span>
+                                                    <% if (test.status==='PASS' ) { %>
+                                                        <span class="status-badge status-pass">PASS</span>
+                                                        <% } else { %>
+                                                            <span class="status-badge status-fail">FAIL</span>
+                                                            <% } %>
+                                                </li>
+                                                <% }) %>
+                                        </ul>
+                                        <% } else { %>
+                                            <p
+                                                style="color: var(--color-muted); font-size: 14px; text-align: center; padding: 20px 0;">
+                                                No tests completed yet.</p>
+                                            <% } %>
+                                </div>
+
+                                <div class="panel">
+                                    <h3>Quick Actions</h3>
+                                    <div class="quick-actions">
+                                        <a href="/new-test" class="action-btn primary">
+                                            <i class="fas fa-plus"></i> New Test
+                                        </a>
+                                        <a href="/test-plan" class="action-btn">
+                                            <i class="fas fa-tasks"></i> Test Planner
+                                        </a>
+                                        <a href="/history" class="action-btn">
+                                            <i class="fas fa-folder-open"></i> View History
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="pending-panel" id="pending-banner" style="display: none;">
+                                <div class="pending-info">
+                                    <h4 style="margin-right:8px; color: #b0700a; font-size: 22px;"><i
+                                            class="fas fa-clock" style="color: #fff;"></i> Pending Actions
+                                    </h4>
+                                    <p><strong style="color:#fff;" id="pending-name">Instrument Name</strong> &bull;
+                                        <span id="pending-remaining">0 tests remaining</span>
+                                    </p>
+                                </div>
+                                <a href="/tests"><button class="btn">Continue <i class="fas fa-arrow-right"
+                                            style="margin-left:6px;"></i></button></a>
+                            </div>
+
                         </div>
                     </div>
-
-                    <div class="pending-panel" id="pending-banner" style="display: none;">
-                        <div class="pending-info">
-                            <h4><i class="fas fa-clock" style="margin-right:8px;"></i> Pending Actions</h4>
-                            <p><strong style="color:#fff;" id="pending-name">Instrument Name</strong> &bull; <span id="pending-remaining">0 tests remaining</span></p>
-                        </div>
-                        <a href="/tests"><button class="btn">Continue <i class="fas fa-arrow-right" style="margin-left:6px;"></i></button></a>
-                    </div>
-
-                </div>
             </div>
-        </div>
     </div>
 
     <!-- Client-side script to calculate pending local tests -->

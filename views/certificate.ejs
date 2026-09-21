@@ -14,17 +14,17 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <style>
         :root {
-            --ink: #1a2332;
-            --ink-soft: #3d4a5c;
-            --line: #c9ced6;
-            --line-strong: #8f98a3;
-            --brand: #0b4f5c;
-            --brand-deep: #083a44;
-            --gold: #a9822f;
-            --pass: #146c43;
-            --fail: #b3261e;
-            --paper: #fdfcf9;
-            --band: #f4f2ec;
+            --ink: #1E1E2C;
+            --ink-soft: #6C757D;
+            --line: #E4E7ED;
+            --line-strong: #A0AAB8;
+            --brand: #1E1E2C;
+            --brand-deep: #F29F67;
+            --gold: #E0B50F;
+            --pass: #34B1AA;
+            --fail: #E74C3C;
+            --paper: #FFFFFF;
+            --band: #F4F5F7;
         }
 
         * {
@@ -660,32 +660,7 @@
 <body>
     <button class="print-button screen-only" onclick="window.print()"><i class="fas fa-print"></i> Print Official Report</button>
 
-    <% /* ---- Pre-compute overall pass/fail per test section for the summary strip ---- */ 
-       const summary=[]; 
-       if (report.form1_results) { const rows=Object.values(report.form1_results).filter(r=> r.load_g !== undefined);
-        const ok = rows.length > 0 && rows.every(r => r.asc_status === 'PASS' && r.desc_status === 'PASS');
-        summary.push({ name: 'Weighing Performance', pass: ok });
-        }
-        if (report.form2_results) {
-        summary.push({ name: 'Repeatability', pass: report.form2_results.Repeatability === 'PASS' });
-        }
-        if (report.form3_results && report.form3_results.details) {
-        const vals = Object.values(report.form3_results.details);
-        summary.push({ name: 'Eccentricity', pass: vals.length > 0 && vals.every(d => d.result === 'PASS') });
-        }
-        if (report.form0_results && report.form0_results.items) {
-        const vals = Object.values(report.form0_results.items);
-        summary.push({ name: 'Visual Inspection', pass: vals.length > 0 && vals.every(v => v === 'on') });
-        }
-        const simpleTests = [
-        { name: 'Zero-Setting', data: report.form_zero_results, resKey: 'ZeroSetting' },
-        { name: 'Tare Accuracy', data: report.form_tare_results, resKey: 'TareAccuracy' },
-        { name: 'Tilt Test', data: report.form_tilt_results, resKey: 'TiltTest' }
-        ];
-        simpleTests.forEach(t => {
-        if (t.data) summary.push({ name: t.name, pass: t.data[t.resKey] === 'PASS' });
-        });
-        %>
+    <% /* ---- Pre-compute overall pass/fail per test section for the summary strip ---- */  const summary=[];  if (report.form1_results) { const rows=Object.values(report.form1_results).filter(r=> r.load_g !== undefined); const ok = rows.length > 0 && rows.every(r => r.asc_status === 'PASS' && r.desc_status === 'PASS'); summary.push({ name: 'Weighing Performance', pass: ok }); } if (report.form2_results) { summary.push({ name: 'Repeatability', pass: report.form2_results.Repeatability === 'PASS' }); } if (report.form3_results && report.form3_results.details) { const vals = Object.values(report.form3_results.details); summary.push({ name: 'Eccentricity', pass: vals.length > 0 && vals.every(d => d.result === 'PASS') }); } if (report.form0_results && report.form0_results.items) { const vals = Object.values(report.form0_results.items); summary.push({ name: 'Visual Inspection', pass: vals.length > 0 && vals.every(v => v === 'on') }); } const simpleTests = [ { name: 'Zero-Setting', data: report.form_zero_results, resKey: 'ZeroSetting' }, { name: 'Tare Accuracy', data: report.form_tare_results, resKey: 'TareAccuracy' }, { name: 'Tilt Test', data: report.form_tilt_results, resKey: 'TiltTest' } ]; simpleTests.forEach(t => { if (t.data) summary.push({ name: t.name, pass: t.data[t.resKey] === 'PASS' }); }); %>
 
         <div class="a4-preview cert-page">
             <div class="cert-frame"></div>
@@ -726,8 +701,7 @@
                             <%= report.instrument_id %>
                         </strong></div>
                     <div>Date of Testing: <strong>
-                            <%= new Date(report.createdAt).toLocaleDateString('en-IN', { day:'2-digit', month:'long',
-                                year:'numeric' }) %>
+                            <%= new Date(report.createdAt).toLocaleDateString('en-IN', { day:'2-digit', month:'long', year:'numeric' }) %>
                         </strong></div>
                 </div>
 
@@ -771,16 +745,13 @@
                                         <%= report.instrument_data?.Class_value || "N/A" %>
                                     </span></p>
                                 <p><strong>Max Capacity (Max)</strong><span class="val">
-                                        <%= report.instrument_data?.capacity ? report.instrument_data.capacity + ' ' +
-                                            (report.instrument_data.max_unit || 'kg' ) : "N/A" %>
+                                        <%= report.instrument_data?.capacity ? report.instrument_data.capacity + ' ' + (report.instrument_data.max_unit || 'kg' ) : "N/A" %>
                                     </span></p>
                                 <p><strong>Verification Scale (e)</strong><span class="val">
-                                        <%= report.instrument_data?.e_value ? report.instrument_data.e_value + ' ' +
-                                            (report.instrument_data.e_unit || 'g' ) : "N/A" %>
+                                        <%= report.instrument_data?.e_value ? report.instrument_data.e_value + ' ' + (report.instrument_data.e_unit || 'g' ) : "N/A" %>
                                     </span></p>
                                 <p><strong>Min Capacity (Min)</strong><span class="val">
-                                        <%= report.instrument_data?.min_capacity ? report.instrument_data.min_capacity
-                                            + ' ' + (report.instrument_data.min_unit || 'g' ) : "N/A" %>
+                                        <%= report.instrument_data?.min_capacity ? report.instrument_data.min_capacity + ' ' + (report.instrument_data.min_unit || 'g' ) : "N/A" %>
                                     </span></p>
                             </div>
                             <div class="cert-section">
@@ -829,8 +800,7 @@
                                             <th>MPE</th>
                                             <th>Status</th>
                                         </tr>
-                                        <% Object.values(report.form1_results).slice(0, 10).forEach(row=> {
-                                            if(row.load_g !== undefined) { %>
+                                        <% Object.values(report.form1_results).slice(0, 10).forEach(row=> { if(row.load_g !== undefined) { %>
                                             <tr>
                                                 <td>
                                                     <%= row.load_g %>
@@ -848,8 +818,7 @@
                                                 </td>
                                                 <td><span
                                                         class="status-tag <%= (row.asc_status === 'PASS' && row.desc_status === 'PASS') ? 'pass' : 'fail' %>">
-                                                        <%= (row.asc_status==='PASS' && row.desc_status==='PASS' )
-                                                            ? 'PASS' : 'FAIL' %>
+                                                        <%= (row.asc_status==='PASS' && row.desc_status==='PASS' ) ? 'PASS' : 'FAIL' %>
                                                     </span></td>
                                             </tr>
                                             <% }}) %>
@@ -897,8 +866,7 @@
                                                                 <th>Error</th>
                                                                 <th>Status</th>
                                                             </tr>
-                                                            <% Object.entries(report.form3_results.details).forEach(([pos,
-                                                                data])=> { %>
+                                                            <% Object.entries(report.form3_results.details).forEach(([pos, data])=> { %>
                                                                 <tr>
                                                                     <td style="text-transform:capitalize;">
                                                                         <%= pos %>
@@ -923,16 +891,14 @@
                                     <div class="table-row">
                                         <% if (report.form0_results && report.form0_results.items) { %>
                                             <div class="cert-table-wrapper">
-                                                <h4>Visual Inspection <span class="count-tag">(<%=
-                                                            Object.keys(report.form0_results.items).length %>
+                                                <h4>Visual Inspection <span class="count-tag">(<%= Object.keys(report.form0_results.items).length %>
                                                             items)</span></h4>
                                                 <table>
                                                     <tr>
                                                         <th>Item</th>
                                                         <th>Status</th>
                                                     </tr>
-                                                    <% Object.entries(report.form0_results.items).forEach(([key, val])=>
-                                                        { %>
+                                                    <% Object.entries(report.form0_results.items).forEach(([key, val])=> { %>
                                                         <tr>
                                                             <td style="text-transform:capitalize;">
                                                                 <%= key %>
@@ -963,11 +929,9 @@
                                                                         <%= test.name %>
                                                                     </td>
                                                                     <td>
-                                                                        <%= test.data.error ?? test.data.error_g ??
-                                                                            test.data.val ?? 'N/A' %>
+                                                                        <%= test.data.error ?? test.data.error_g ?? test.data.val ?? 'N/A' %>
                                                                     </td>
-                                                                    <td>&plusmn;<%= test.data.limit ?? test.data.limit_g
-                                                                            ?? test.data.mpe ?? 'N/A' %>
+                                                                    <td>&plusmn;<%= test.data.limit ?? test.data.limit_g ?? test.data.mpe ?? 'N/A' %>
                                                                     </td>
                                                                     <td><span
                                                                             class="status-tag <%= test.data[test.resKey] === 'PASS' ? 'pass' : 'fail' %>">

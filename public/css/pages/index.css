@@ -1,12 +1,12 @@
 :root {
-    --color-teal: #0E7C86;
-    --color-teal-dark: #084c53;
-    --color-navy: #1a2a4a;
-    --color-navy-dark: #071E2B;
-    --color-bg: #f8faff;
-    --color-text: #333;
-    --color-text-muted: #666;
-    --font-main: 'IBM Plex Sans', sans-serif;
+    --color-teal: #F29F67;
+    --color-teal-dark: #D8824C;
+    --color-navy: #1E1E2C;
+    --color-navy-dark: #1E1E2C;
+    --color-bg: #F4F5F7;
+    --color-text: #1E1E2C;
+    --color-text-muted: #6C757D;
+    --font-main: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
 body {
@@ -53,16 +53,16 @@ body {
 }
 .btn-text:hover { color: var(--color-teal); }
 .btn-primary {
-    background: linear-gradient(135deg, var(--color-teal), var(--color-teal-dark));
+    background: #3B8FF3;
     color: #fff;
     padding: 12px 24px;
     border-radius: 8px;
     text-decoration: none;
     font-weight: 700;
-    box-shadow: 0 4px 15px rgba(14,124,134,0.3);
+    box-shadow: 0 4px 15px rgba(59, 143, 243, 0.3);
     transition: transform 0.2s, box-shadow 0.2s;
 }
-.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(14,124,134,0.4); }
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(59, 143, 243, 0.4); }
 
 .hero {
     display: flex;

@@ -23,17 +23,47 @@ async function proceed() {
 
     const minG = Number(data.min_capacity_g) > 0 ? Number(data.min_capacity_g) : (20 * eG);
 
-    // Read photo as base64 if provided
-    let photoBase64 = "";
-    const photoInput = document.getElementById("instrument_photo");
-    if (photoInput && photoInput.files && photoInput.files[0]) {
-        const file = photoInput.files[0];
-        photoBase64 = await new Promise((resolve) => {
-            const reader = new FileReader();
-            reader.onloadend = () => resolve(reader.result);
-            reader.readAsDataURL(file);
-        });
-    }
+    // Read Administrative Evidence Files
+    const readBase64 = (fileInputId) => {
+        const input = document.getElementById(fileInputId);
+        if (input && input.files && input.files[0]) {
+            return new Promise((resolve) => {
+                const reader = new FileReader();
+                reader.onloadend = () => resolve(reader.result);
+                reader.readAsDataURL(input.files[0]);
+            });
+        }
+        return Promise.resolve("");
+    };
+
+    const getDocName = (fileInputId) => {
+        const input = document.getElementById(fileInputId);
+        if (input && input.files && input.files[0]) {
+            return input.files[0].name;
+        }
+        return "";
+    };
+
+    const photoFrontBase64 = await readBase64("photo_front");
+    const photoNameplateBase64 = await readBase64("photo_nameplate");
+    const photoRearSideBase64 = await readBase64("photo_rear_side");
+
+    const docTechSpec = getDocName("doc_tech_spec");
+    const docOperatingManual = getDocName("doc_operating_manual");
+    const docDrawing = getDocName("doc_drawing");
+
+    const adminEvidence = {
+        photos: {
+            front: photoFrontBase64,
+            nameplate: photoNameplateBase64,
+            rear_side: photoRearSideBase64
+        },
+        docs: {
+            spec: docTechSpec,
+            manual: docOperatingManual,
+            drawing: docDrawing
+        }
+    };
 
     // Capture Lab Details
     const labDetails = {
@@ -44,17 +74,18 @@ async function proceed() {
         voltage: data.voltage
     };
 
-    localStorage.setItem("InstrumentData",    JSON.stringify(data));
-    localStorage.setItem("LabDetails",        JSON.stringify(labDetails));
-    localStorage.setItem("InstrumentPhoto",   photoBase64);
+    localStorage.setItem("InstrumentData",         JSON.stringify(data));
+    localStorage.setItem("LabDetails",             JSON.stringify(labDetails));
+    localStorage.setItem("AdministrativeEvidence", JSON.stringify(adminEvidence));
+    localStorage.setItem("InstrumentPhoto",        photoFrontBase64 || photoNameplateBase64 || photoRearSideBase64 || "");
     const activeRuleVer = document.getElementById("rule_set_version")?.value || data.rule_set_version || localStorage.getItem("RuleSetVersion") || "OIML R-76 V1";
-    localStorage.setItem("RuleSetVersion",    activeRuleVer);
-    localStorage.setItem("RuleSetRules",      JSON.stringify(window.ACTIVE_OIML_RULES || JSON.parse(localStorage.getItem("RuleSetRules") || "{}")));
+    localStorage.setItem("RuleSetVersion",         activeRuleVer);
+    localStorage.setItem("RuleSetRules",           JSON.stringify(window.ACTIVE_OIML_RULES || JSON.parse(localStorage.getItem("RuleSetRules") || "{}")));
     
-    localStorage.setItem("Capacity",          maxKg);
-    localStorage.setItem("eValue",            eG);
-    localStorage.setItem("ClassValue",        data.Class_value);
-    localStorage.setItem("minCapacity",       minG);
+    localStorage.setItem("Capacity",               maxKg);
+    localStorage.setItem("eValue",                 eG);
+    localStorage.setItem("ClassValue",             data.Class_value);
+    localStorage.setItem("minCapacity",            minG);
     
     let isMobile = false;
     let hasMultiPosition = true;
@@ -75,7 +106,8 @@ async function proceed() {
      "form0","form0_results","form1","form1_results",
      "form2","form2_results","form3","form3_results",
      "form_zero","form_zero_results","form_tare","form_tare_results",
-     "form_tilt","form_tilt_results"
+     "form_tilt","form_tilt_results",
+     "evidence_1","evidence_2","evidence_3","evidence_4","evidence_5","evidence_6","evidence_8"
     ].forEach(k => localStorage.removeItem(k));
 
     window.location.href = '/test-plan';
@@ -180,10 +212,10 @@ if (_container) {
 
         const activeRuleVersion = localStorage.getItem("RuleSetVersion") || "OIML R-76 V1";
         _container.innerHTML = `
-            <div class="form-card" style="padding: 32px; font-family: 'IBM Plex Sans', sans-serif;">
+            <div class="form-card" style="padding: 32px; font-family: var(--font-body);">
                 <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:12px;">
                     <h3 style="margin:0; color:var(--color-ink); font-family:var(--font-display); font-size: 22px;">Test Execution Dashboard</h3>
-                    <span style="background: rgba(14, 124, 134, 0.12); color: #0E7C86; border: 1px solid rgba(14, 124, 134, 0.3); padding: 4px 14px; border-radius: 20px; font-size: 0.8rem; font-weight: 700;">
+                    <span style="background: rgba(242, 159, 103, 0.15); color: #F29F67; border: 1px solid rgba(242, 159, 103, 0.3); padding: 4px 14px; border-radius: 20px; font-size: 0.8rem; font-weight: 700;">
                         <i class="fas fa-book"></i> Active Rule Set: ${activeRuleVersion}
                     </span>
                 </div>
@@ -191,7 +223,7 @@ if (_container) {
                 <div style="margin-top: 24px; margin-bottom: 24px; color:#555; font-family: monospace;">
                     <div style="margin-bottom: 6px; font-size: 14px;">Progress</div>
                     <div style="font-size:18px;">
-                        <span style="color:#0E7C86;">${bar}</span> ${pct}%
+                        <span style="color:#F29F67;">${bar}</span> ${pct}%
                     </div>
                 </div>
                 
@@ -205,11 +237,11 @@ if (_container) {
 
                 <div style="display:flex; justify-content: space-between; margin-bottom: 32px; color:#555;">
                     <div>Tests completed:<br><strong style="font-size:22px; color:var(--color-ink);">${_completedCount} / ${_testsToRun.length}</strong></div>
-                    <div>Passed:<br><strong style="font-size:22px; color:#28c76f;">${_passedCount}</strong></div>
+                    <div>Passed:<br><strong style="font-size:22px; color:#34B1AA;">${_passedCount}</strong></div>
                     <div>Failed:<br><strong style="font-size:22px; color:#e74c3c;">${_failedCount}</strong></div>
                 </div>
 
-                <button class="btn" style="width:100%; padding: 14px; font-size:16px; background:#0E7C86;" onclick="_showTest(${_currentIdx})">
+                <button class="btn" style="width:100%; padding: 14px; font-size:16px; background:#3B8FF3;" onclick="_showTest(${_currentIdx})">
                     ${_completedCount === _testsToRun.length ? 'Review Latest Test' : 'Continue Testing'}
                 </button>
             </div>
@@ -253,6 +285,57 @@ if (_container) {
             // Going back to dashboard provides a nice intermediate step
             _renderTestDashboard();
         }
+    }
+
+    // ── Supporting Evidence UI Helpers ───────────────────────
+    function _supportingEvidenceHTML(testId, testName) {
+        return `
+        <div class="supporting-evidence-box" style="margin-top:20px; padding:14px; background:#f8fafc; border:1px dashed #cbd5e1; border-radius:8px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                <label style="font-weight:600; font-size:0.85rem; color:#334155; margin:0;">
+                    <i class="fas fa-camera" style="color:var(--brand, #0b4f5c);"></i> Supporting Evidence (Optional)
+                </label>
+                <span style="font-size:0.75rem; color:#64748b; background:#e2e8f0; padding:2px 8px; border-radius:10px;">Optional</span>
+            </div>
+            <p style="font-size:0.78rem; color:#64748b; margin:0 0 10px 0;">
+                Attach relevant photograph or setup document for this test activity.
+            </p>
+            <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap:10px;">
+                <div>
+                    <input type="file" id="test_evidence_file_${testId}" accept="image/*,.pdf" class="form-input" style="padding:5px; font-size:0.8rem;">
+                </div>
+                <div>
+                    <input type="text" id="test_evidence_desc_${testId}" placeholder="Caption (e.g. ${testName} setup)" class="form-input" style="padding:6px; font-size:0.8rem;">
+                </div>
+            </div>
+        </div>`;
+    }
+
+    async function saveTestEvidence(testId, testCode, testName) {
+        const fileInput = document.getElementById("test_evidence_file_" + testId);
+        const descInput = document.getElementById("test_evidence_desc_" + testId);
+        if (!fileInput || !fileInput.files || !fileInput.files[0]) {
+            return null;
+        }
+        const file = fileInput.files[0];
+        const desc = (descInput && descInput.value.trim()) ? descInput.value.trim() : `${testName} setup photo`;
+        
+        const base64 = await new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.onloadend = () => resolve(reader.result);
+            reader.readAsDataURL(file);
+        });
+
+        const evItem = {
+            id: `EV-${testCode}-001`,
+            type: file.type.startsWith("image/") ? "Photo" : "Document",
+            description: desc,
+            related_test: testName,
+            file_data: base64,
+            filename: file.name
+        };
+        localStorage.setItem("evidence_" + testId, JSON.stringify(evItem));
+        return evItem;
     }
 
     // ── Next button HTML helper ───────────────────────────────
@@ -322,15 +405,17 @@ if (_container) {
                     Verify all items below. All checkboxes must be confirmed before proceeding.
                 </p>
                 ${listHTML}
+                ${_supportingEvidenceHTML(1, 'Visual Inspection')}
             </div>
             ${_nextBtn('proceedVisual', isLast)}
         </form>`;
     }
 
-    window.proceedVisual = function () {
+    window.proceedVisual = async function () {
         const form = document.getElementById("test-form");
         if (!form || !form.reportValidity()) return;
         const data = Object.fromEntries(new FormData(form).entries());
+        await saveTestEvidence(1, "VIS", "Visual Inspection");
         localStorage.setItem("form0",         JSON.stringify(data));
         localStorage.setItem("form0_results", JSON.stringify({ items: data, result: "PASS" }));
         _advance();
@@ -393,6 +478,7 @@ if (_container) {
                 </p>
                 ${ascHTML}
                 ${descHTML}
+                ${_supportingEvidenceHTML(2, 'Weighing Performance')}
             </div>
             ${_nextBtn('proceedWeighing', isLast)}
         </form>`;
@@ -405,9 +491,10 @@ if (_container) {
         });
     };
 
-    window.proceedWeighing = function () {
+    window.proceedWeighing = async function () {
         const form = document.getElementById("test-form");
         if (!form || !form.reportValidity()) return;
+        await saveTestEvidence(2, "WP", "Weighing Performance");
         const data = Object.fromEntries(new FormData(form).entries());
         localStorage.setItem("form1", JSON.stringify(data));
 
@@ -485,6 +572,7 @@ if (_container) {
                         oninput="document.querySelectorAll('#test-form input[type=number]:not(#rep-load)').forEach(i=>{if(i.value)validateRepeatLive(i);})">
                 </div>
                 ${readHTML}
+                ${_supportingEvidenceHTML(3, 'Repeatability')}
             </div>
             ${_nextBtn('proceedRepeat', isLast)}
         </form>`;
@@ -507,9 +595,10 @@ if (_container) {
         });
     };
 
-    window.proceedRepeat = function () {
+    window.proceedRepeat = async function () {
         const form = document.getElementById("test-form");
         if (!form || !form.reportValidity()) return;
+        await saveTestEvidence(3, "REP", "Repeatability");
         const data = Object.fromEntries(new FormData(form).entries());
 
         const load_kg = Number(data.applied_load_repeatability);
@@ -586,6 +675,7 @@ if (_container) {
                     <label>${["①","②","③","④","⑤"][i]} ${pos.charAt(0).toUpperCase()+pos.slice(1)} Position:</label>
                     <input type="number" step="any" name="${pos}" oninput="validateEccLive(this)" required>
                 </div>`).join('')}
+                ${_supportingEvidenceHTML(4, 'Eccentricity')}
             </div>
             ${_nextBtn('proceedEcc', isLast)}
         </form>`;
@@ -608,9 +698,10 @@ if (_container) {
         });
     };
 
-    window.proceedEcc = function () {
+    window.proceedEcc = async function () {
         const form = document.getElementById("test-form");
         if (!form || !form.reportValidity()) return;
+        await saveTestEvidence(4, "ECC", "Eccentricity");
         const data = Object.fromEntries(new FormData(form).entries());
 
         const load_kg = Number(data.applied_load);
@@ -664,14 +755,16 @@ if (_container) {
                         <span>After placing and removing a test load, zero is correctly restored</span>
                     </label>
                 </div>
+                ${_supportingEvidenceHTML(5, 'Zero-Setting')}
             </div>
             ${_nextBtn('proceedZero', isLast)}
         </form>`;
     }
 
-    window.proceedZero = function () {
+    window.proceedZero = async function () {
         const form = document.getElementById("test-form");
         if (!form || !form.reportValidity()) return;
+        await saveTestEvidence(5, "ZERO", "Zero-Setting");
         const data     = Object.fromEntries(new FormData(form).entries());
         const ind_g    = Number(data.zero_indication) * 1000;
         const err_g    = Math.abs(ind_g);
@@ -716,14 +809,16 @@ if (_container) {
                     <label>Gross indication (tare + test load):</label>
                     <input type="number" step="any" name="gross_indication" required>
                 </div>
+                ${_supportingEvidenceHTML(6, 'Tare Accuracy')}
             </div>
             ${_nextBtn('proceedTare', isLast)}
         </form>`;
     }
 
-    window.proceedTare = function () {
+    window.proceedTare = async function () {
         const form = document.getElementById("test-form");
         if (!form || !form.reportValidity()) return;
+        await saveTestEvidence(6, "TARE", "Tare Accuracy");
         const data = Object.fromEntries(new FormData(form).entries());
 
         const tare_g   = Number(data.tare_load) * 1000;
@@ -770,14 +865,16 @@ if (_container) {
                     <label>Reading after tilt in Y-direction (kg):</label>
                     <input type="number" step="any" name="tilt_y" required>
                 </div>
+                ${_supportingEvidenceHTML(8, 'Tilt Test')}
             </div>
             ${_nextBtn('proceedTilt', isLast)}
         </form>`;
     }
 
-    window.proceedTilt = function () {
+    window.proceedTilt = async function () {
         const form = document.getElementById("test-form");
         if (!form || !form.reportValidity()) return;
+        await saveTestEvidence(8, "TILT", "Tilt Test");
         const data = Object.fromEntries(new FormData(form).entries());
 
         const ref_g  = Number(data.tilt_ref) * 1000;
@@ -811,26 +908,64 @@ if (_container) {
 
         const get = key => JSON.parse(localStorage.getItem(key) || "{}");
 
+        const adminEv = get("AdministrativeEvidence");
+        const evidenceRegister = [];
+
+        if (adminEv) {
+            if (adminEv.photos) {
+                if (adminEv.photos.front) {
+                    evidenceRegister.push({ id: "EV-001", type: "Photo", description: "Instrument Front View photo", related_test: "General / Administrative", file_data: adminEv.photos.front });
+                }
+                if (adminEv.photos.nameplate) {
+                    evidenceRegister.push({ id: "EV-002", type: "Photo", description: "Instrument Nameplate & Markings photo", related_test: "General / Administrative", file_data: adminEv.photos.nameplate });
+                }
+                if (adminEv.photos.rear_side) {
+                    evidenceRegister.push({ id: "EV-003", type: "Photo", description: "Instrument Rear / Side View photo", related_test: "General / Administrative", file_data: adminEv.photos.rear_side });
+                }
+            }
+            if (adminEv.docs) {
+                if (adminEv.docs.spec) {
+                    evidenceRegister.push({ id: "EV-DOC-001", type: "Document", description: `Technical Specification (${adminEv.docs.spec})`, related_test: "General / Administrative" });
+                }
+                if (adminEv.docs.manual) {
+                    evidenceRegister.push({ id: "EV-DOC-002", type: "Document", description: `Operating Manual (${adminEv.docs.manual})`, related_test: "General / Administrative" });
+                }
+                if (adminEv.docs.drawing) {
+                    evidenceRegister.push({ id: "EV-DOC-003", type: "Document", description: `Engineering Drawing (${adminEv.docs.drawing})`, related_test: "General / Administrative" });
+                }
+            }
+        }
+
+        // Add test-specific evidence items
+        [1, 2, 3, 4, 5, 6, 8].forEach(id => {
+            const testEv = get("evidence_" + id);
+            if (testEv && testEv.id) {
+                evidenceRegister.push(testEv);
+            }
+        });
+
         const finalData = {
-            instrument:        get("InstrumentData"),
-            testPlan:          JSON.parse(localStorage.getItem("confirmedTestPlan") || "null"),
-            form0:             get("form0"),
-            form0_results:     get("form0_results"),
-            form1:             get("form1"),
-            form1_results:     get("form1_results"),
-            form2:             get("form2"),
-            form2_results:     get("form2_results"),
-            form3:             get("form3"),
-            form3_results:     get("form3_results"),
-            form_zero:         get("form_zero"),
-            form_zero_results: get("form_zero_results"),
-            form_tare:         get("form_tare"),
-            form_tare_results: get("form_tare_results"),
-            form_tilt:         get("form_tilt"),
-            form_tilt_results: get("form_tilt_results"),
-            lab_details:       get("LabDetails"),
-            instrument_photo:  localStorage.getItem("InstrumentPhoto") || "",
-            rule_set_version:  localStorage.getItem("RuleSetVersion") || "Unknown"
+            instrument:              get("InstrumentData"),
+            testPlan:                JSON.parse(localStorage.getItem("confirmedTestPlan") || "null"),
+            form0:                   get("form0"),
+            form0_results:           get("form0_results"),
+            form1:                   get("form1"),
+            form1_results:           get("form1_results"),
+            form2:                   get("form2"),
+            form2_results:           get("form2_results"),
+            form3:                   get("form3"),
+            form3_results:           get("form3_results"),
+            form_zero:               get("form_zero"),
+            form_zero_results:       get("form_zero_results"),
+            form_tare:               get("form_tare"),
+            form_tare_results:       get("form_tare_results"),
+            form_tilt:               get("form_tilt"),
+            form_tilt_results:       get("form_tilt_results"),
+            lab_details:             get("LabDetails"),
+            administrative_evidence: adminEv,
+            evidence_register:       evidenceRegister,
+            instrument_photo:        localStorage.getItem("InstrumentPhoto") || "",
+            rule_set_version:        localStorage.getItem("RuleSetVersion") || "Unknown"
         };
 
         fetch("/api/save-report", {

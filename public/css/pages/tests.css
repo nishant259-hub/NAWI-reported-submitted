@@ -1,7 +1,7 @@
 /* tests.css */
 /* Progress Bar */
 .progress-wrapper {
-    background: linear-gradient(135deg, #0E7C86, #084c53);
+    background: linear-gradient(135deg, #1E1E2C 0%, #2D2D42 100%);
     border-radius: 14px;
     padding: 20px 28px;
     margin-bottom: 28px;
@@ -12,34 +12,34 @@
     margin-bottom: 14px;
 }
 .progress-header h3 { margin: 0; font-size: 1.1rem; font-weight: 700; color: #fff; }
-.progress-label     { font-size: 0.85rem; color: rgba(255, 255, 255, 0.95); font-weight: 500; }
+.progress-label     { font-size: 0.85rem; color: rgba(255, 255, 255, 0.85); font-weight: 500; }
 .progress-steps     { display: flex; gap: 5px; flex-wrap: wrap; }
 .step-dot {
     height: 8px; border-radius: 4px; flex: 1; min-width: 28px;
     transition: background 0.4s ease;
 }
-.step-dot.done    { background: #5df09f; }
-.step-dot.active  { background: #ffffff; }
-.step-dot.pending { background: rgba(255,255,255,0.25); }
+.step-dot.done    { background: #34B1AA; }
+.step-dot.active  { background: #F29F67; }
+.step-dot.pending { background: rgba(255,255,255,0.2); }
 .step-names { display: flex; margin-top: 8px; }
 .step-name  { flex: 1; text-align: center; font-size: 0.72rem; color: rgba(255, 255, 255, 0.75); font-weight: 500; }
-.step-name.active { color: #ffffff; font-weight: 800; font-size: 0.75rem; }
-.step-name.done   { color: #5df09f; font-weight: 600; }
+.step-name.active { color: #F29F67; font-weight: 800; font-size: 0.75rem; }
+.step-name.done   { color: #34B1AA; font-weight: 600; }
 
 /* Checklist (used by visual inspection) */
 .checklist-item {
-    background: #f8faff; border: 1px solid #dde8f5;
+    background: #F8F9FA; border: 1px solid var(--color-line);
     border-radius: 8px; padding: 12px 16px; margin-bottom: 8px;
     transition: background 0.2s;
 }
-.checklist-item:hover { background: #eef4ff; }
+.checklist-item:hover { background: #F4F5F7; }
 .checklist-item label {
     display: flex; align-items: flex-start; gap: 12px;
     cursor: pointer; margin: 0;
 }
 .checklist-item input[type="checkbox"] {
     width: 18px; height: 18px; margin-top: 1px;
-    flex-shrink: 0; accent-color: #1a7a4a;
+    flex-shrink: 0; accent-color: var(--color-teal);
 }
 
 /* Eccentricity diagram */
@@ -50,11 +50,11 @@
     gap: 5px; margin: 12px auto; text-align: center;
 }
 .ecc-cell {
-    border: 2px solid #c5d8f0; border-radius: 8px;
+    border: 2px solid var(--color-line); border-radius: 8px;
     display: flex; flex-direction: column; align-items: center;
     justify-content: center; font-size: 0.72rem; font-weight: 600;
-    color: #1a3a6b; background: #f0f6ff; padding: 6px;
+    color: #1E1E2C; background: #F4F5F7; padding: 6px;
 }
-.ecc-cell.center  { background: #c8dff8; border-color: #4a90d9; }
+.ecc-cell.center  { background: FEF0E6; border-color: #F29F67; }
 .ecc-cell.empty   { border: none; background: transparent; }
-.ecc-num { font-size: 1.3rem; font-weight: 800; color: #1a6aaa; }
+.ecc-num { font-size: 1.3rem; font-weight: 800; color: #F29F67; }
