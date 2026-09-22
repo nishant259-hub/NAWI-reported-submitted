@@ -513,7 +513,8 @@ app.post("/api/admin/rules/add", authMiddleware, adminMiddleware, async (req, re
 
 app.post("/api/admin/rules/activate/:id", authMiddleware, adminMiddleware, async (req, res) => {
     try {
-        const targetRule = await RuleSet.findById(req.params.id);
+        const ruleId = (req.params.id || "").trim();
+        const targetRule = await RuleSet.findById(ruleId);
         if (!targetRule) return res.status(404).json({ error: "Not found" });
 
         const previousRule = await RuleSet.findOne({ isActive: true });
