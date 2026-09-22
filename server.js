@@ -49,13 +49,44 @@ const adminMiddleware = (req, res, next) => {
     next();
 };
 
-// MongoDB Connection
-mongoose.connect(process.env.MONGO_DB)
-    .then(() => {
-        console.log("✅ Connected to MongoDB");
-    }).catch((err) => {
-        console.error("❌ MongoDB connection error:", err);
+// MongoDB Serverless Connection & Caching Helper
+let cachedDb = null;
+
+const connectDB = async () => {
+    if (cachedDb && mongoose.connection.readyState === 1) {
+        return cachedDb;
+    }
+
+    const mongoUri = process.env.MONGODB_URI || process.env.MONGO_URI || process.env.MONGO_DB || "mongodb://127.0.0.1:27017/nawi_test_db";
+
+    if (mongoose.connection.readyState === 2) {
+        await new Promise((resolve) => setTimeout(resolve, 500));
+        if (mongoose.connection.readyState === 1) return mongoose.connection;
+    }
+
+    const db = await mongoose.connect(mongoUri, {
+        serverSelectionTimeoutMS: 8000,
+        bufferCommands: false,
     });
+
+    cachedDb = db;
+    console.log("✅ Connected to MongoDB Atlas");
+    return cachedDb;
+};
+
+// Database connection middleware for all API & View requests
+app.use(async (req, res, next) => {
+    if (req.path.startsWith("/css") || req.path.startsWith("/js") || req.path.startsWith("/images") || req.path.includes(".")) {
+        return next();
+    }
+    try {
+        await connectDB();
+        next();
+    } catch (err) {
+        console.error("❌ MongoDB connection error:", err.message);
+        res.status(500).send("Database Connection Error: " + err.message + ". Please verify MONGODB_URI in Vercel environment variables and ensure 0.0.0.0/0 is whitelisted in MongoDB Atlas Network Access.");
+    }
+});
 
 
 // ── API Routes ──────────────────────────────────────────────────
