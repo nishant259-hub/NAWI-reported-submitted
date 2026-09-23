@@ -4,7 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NAWI Test Report - <%= report.instrument_id %></title>
+    <title>NAWI Test Report - <%= report.instrument_id %>
+    </title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link
@@ -36,6 +37,7 @@
                 size: A4;
                 margin: 10mm;
             }
+
             body {
                 background: #fff !important;
                 margin: 0;
@@ -70,7 +72,7 @@
                 width: 100% !important;
                 z-index: -1;
             }
-            
+
             .watermark {
                 position: fixed !important;
                 top: 50% !important;
@@ -86,11 +88,11 @@
                 page-break-inside: avoid;
                 break-inside: avoid;
             }
-            
+
             table {
                 page-break-inside: auto;
             }
-            
+
             tr {
                 page-break-inside: avoid;
                 page-break-after: auto;
@@ -260,7 +262,7 @@
             border-radius: 6px;
             font-family: 'Inter', sans-serif;
             text-align: left;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
         }
 
         .qr-code-wrapper {
@@ -658,9 +660,22 @@
 </head>
 
 <body>
-    <button class="print-button screen-only" onclick="window.print()"><i class="fas fa-print"></i> Print Official Report</button>
+    <button class="print-button screen-only" onclick="window.print()"><i class="fas fa-print"></i> Print Official
+        Report</button>
 
-    <% /* ---- Pre-compute overall pass/fail per test section for the summary strip ---- */  const summary=[];  if (report.form1_results) { const rows=Object.values(report.form1_results).filter(r=> r.load_g !== undefined); const ok = rows.length > 0 && rows.every(r => r.asc_status === 'PASS' && r.desc_status === 'PASS'); summary.push({ name: 'Weighing Performance', pass: ok }); } if (report.form2_results) { summary.push({ name: 'Repeatability', pass: report.form2_results.Repeatability === 'PASS' }); } if (report.form3_results && report.form3_results.details) { const vals = Object.values(report.form3_results.details); summary.push({ name: 'Eccentricity', pass: vals.length > 0 && vals.every(d => d.result === 'PASS') }); } if (report.form0_results && report.form0_results.items) { const vals = Object.values(report.form0_results.items); summary.push({ name: 'Visual Inspection', pass: vals.length > 0 && vals.every(v => v === 'on') }); } const simpleTests = [ { name: 'Zero-Setting', data: report.form_zero_results, resKey: 'ZeroSetting' }, { name: 'Tare Accuracy', data: report.form_tare_results, resKey: 'TareAccuracy' }, { name: 'Tilt Test', data: report.form_tilt_results, resKey: 'TiltTest' } ]; simpleTests.forEach(t => { if (t.data) summary.push({ name: t.name, pass: t.data[t.resKey] === 'PASS' }); }); %>
+    <% /* ---- Pre-compute overall pass/fail per test section for the summary strip ---- */ const summary=[]; if
+        (report.form1_results) { const rows=Object.values(report.form1_results).filter(r=> r.load_g !== undefined);
+        const ok = rows.length > 0 && rows.every(r => r.asc_status === 'PASS' && r.desc_status === 'PASS');
+        summary.push({ name: 'Weighing Performance', pass: ok }); } if (report.form2_results) { summary.push({ name:
+        'Repeatability', pass: report.form2_results.Repeatability === 'PASS' }); } if (report.form3_results &&
+        report.form3_results.details) { const vals = Object.values(report.form3_results.details); summary.push({ name:
+        'Eccentricity', pass: vals.length > 0 && vals.every(d => d.result === 'PASS') }); } if (report.form0_results &&
+        report.form0_results.items) { const vals = Object.values(report.form0_results.items); summary.push({ name:
+        'Visual Inspection', pass: vals.length > 0 && vals.every(v => v === 'on') }); } const simpleTests = [ { name:
+        'Zero-Setting', data: report.form_zero_results, resKey: 'ZeroSetting' }, { name: 'Tare Accuracy', data:
+        report.form_tare_results, resKey: 'TareAccuracy' }, { name: 'Tilt Test', data: report.form_tilt_results, resKey:
+        'TiltTest' } ]; simpleTests.forEach(t => { if (t.data) summary.push({ name: t.name, pass: t.data[t.resKey] ===
+        'PASS' }); }); %>
 
         <div class="a4-preview cert-page">
             <div class="cert-frame"></div>
@@ -678,16 +693,19 @@
                     </div>
                     <div class="cert-id-box">
                         <div class="qr-code-wrapper" id="qr-canvas-container">
-                            <img id="cert-qr-img" 
-                                 src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&margin=0&data=<%= encodeURIComponent('https://nawireported.onrender.com/certificate?id=' + report._id) %>" 
-                                 alt="QR Code - Scan to Verify"
-                                 class="qr-code-img">
+                            <img id="cert-qr-img"
+                                src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&margin=0&data=<%= encodeURIComponent('https://nawireported.vercel.app/certificate?id=' + report._id) %>"
+                                alt="QR Code - Scan to Verify" class="qr-code-img">
                         </div>
                         <div class="cert-id-details">
-                            <div class="label"><i class="fas fa-shield-alt" style="color:var(--brand); font-size:8px;"></i> Certificate / Report No.</div>
-                            <div class="value"><%= report._id %></div>
+                            <div class="label"><i class="fas fa-shield-alt"
+                                    style="color:var(--brand); font-size:8px;"></i> Certificate / Report No.</div>
+                            <div class="value">
+                                <%= report._id %>
+                            </div>
                             <div class="qr-caption">
-                                <i class="fas fa-qrcode" style="font-size:8px; color:var(--brand);"></i> Scan QR to verify authenticity on portal
+                                <i class="fas fa-qrcode" style="font-size:8px; color:var(--brand);"></i> Scan QR to
+                                verify authenticity on portal
                             </div>
                             <div class="qr-badge">
                                 <i class="fas fa-check-circle" style="font-size:7.5px;"></i> Official Digital Record
@@ -701,7 +719,8 @@
                             <%= report.instrument_id %>
                         </strong></div>
                     <div>Date of Testing: <strong>
-                            <%= new Date(report.createdAt).toLocaleDateString('en-IN', { day:'2-digit', month:'long', year:'numeric' }) %>
+                            <%= new Date(report.createdAt).toLocaleDateString('en-IN', { day:'2-digit', month:'long',
+                                year:'numeric' }) %>
                         </strong></div>
                 </div>
 
@@ -725,7 +744,8 @@
 
                         <div class="cert-grid-4">
                             <div class="cert-section">
-                                <h4><i class="fas fa-balance-scale" style="color:var(--brand); margin-right:4px;"></i> Instrument Details</h4>
+                                <h4><i class="fas fa-balance-scale" style="color:var(--brand); margin-right:4px;"></i>
+                                    Instrument Details</h4>
                                 <p><strong>Type</strong><span class="val">
                                         <%= report.instrument_data?.instrument_type || "N/A" %>
                                     </span></p>
@@ -740,27 +760,35 @@
                                     </span></p>
                             </div>
                             <div class="cert-section">
-                                <h4><i class="fas fa-ruler-combined" style="color:var(--brand); margin-right:4px;"></i> Metrological Characteristics</h4>
+                                <h4><i class="fas fa-ruler-combined" style="color:var(--brand); margin-right:4px;"></i>
+                                    Metrological Characteristics</h4>
                                 <p><strong>Accuracy Class</strong><span class="val">
                                         <%= report.instrument_data?.Class_value || "N/A" %>
                                     </span></p>
                                 <p><strong>Max Capacity (Max)</strong><span class="val">
-                                        <%= report.instrument_data?.capacity ? report.instrument_data.capacity + ' ' + (report.instrument_data.max_unit || 'kg' ) : "N/A" %>
+                                        <%= report.instrument_data?.capacity ? report.instrument_data.capacity + ' ' +
+                                            (report.instrument_data.max_unit || 'kg' ) : "N/A" %>
                                     </span></p>
                                 <p><strong>Verification Scale (e)</strong><span class="val">
-                                        <%= report.instrument_data?.e_value ? report.instrument_data.e_value + ' ' + (report.instrument_data.e_unit || 'g' ) : "N/A" %>
+                                        <%= report.instrument_data?.e_value ? report.instrument_data.e_value + ' ' +
+                                            (report.instrument_data.e_unit || 'g' ) : "N/A" %>
                                     </span></p>
                                 <p><strong>Min Capacity (Min)</strong><span class="val">
-                                        <%= report.instrument_data?.min_capacity ? report.instrument_data.min_capacity + ' ' + (report.instrument_data.min_unit || 'g' ) : "N/A" %>
+                                        <%= report.instrument_data?.min_capacity ? report.instrument_data.min_capacity
+                                            + ' ' + (report.instrument_data.min_unit || 'g' ) : "N/A" %>
                                     </span></p>
                             </div>
                             <div class="cert-section">
-                                <h4><i class="fas fa-building" style="color:var(--brand); margin-right:4px;"></i> Laboratory & Facility</h4>
+                                <h4><i class="fas fa-building" style="color:var(--brand); margin-right:4px;"></i>
+                                    Laboratory & Facility</h4>
                                 <p><strong>Laboratory Name</strong><span class="val">
-                                        <%= (report.lab_details && report.lab_details.name) ? report.lab_details.name : "National Metrology Laboratory" %>
+                                        <%= (report.lab_details && report.lab_details.name) ? report.lab_details.name
+                                            : "National Metrology Laboratory" %>
                                     </span></p>
                                 <p><strong>Location / State</strong><span class="val">
-                                        <%= (report.lab_details && (report.lab_details.location || report.lab_details.state)) ? (report.lab_details.location || report.lab_details.state) : "New Delhi, Delhi" %>
+                                        <%= (report.lab_details && (report.lab_details.location ||
+                                            report.lab_details.state)) ? (report.lab_details.location ||
+                                            report.lab_details.state) : "New Delhi, Delhi" %>
                                     </span></p>
                                 <p><strong>Rule Set Standard</strong><span class="val">
                                         <%= report.rule_set_version || "OIML R-76 V1" %>
@@ -770,17 +798,25 @@
                                     </span></p>
                             </div>
                             <div class="cert-section">
-                                <h4><i class="fas fa-thermometer-half" style="color:var(--brand); margin-right:4px;"></i> Environmental Conditions</h4>
+                                <h4><i class="fas fa-thermometer-half"
+                                        style="color:var(--brand); margin-right:4px;"></i> Environmental Conditions</h4>
                                 <p><strong>Ambient Temp.</strong><span class="val">
-                                        <%= (report.lab_details && report.lab_details.temperature !== undefined && report.lab_details.temperature !== "") ? report.lab_details.temperature + ' °C' : "20.0 °C" %>
+                                        <%= (report.lab_details && report.lab_details.temperature !==undefined &&
+                                            report.lab_details.temperature !=="" ) ? report.lab_details.temperature
+                                            + ' °C' : "20.0 °C" %>
                                     </span></p>
                                 <p><strong>Relative Humidity</strong><span class="val">
-                                        <%= (report.lab_details && report.lab_details.humidity !== undefined && report.lab_details.humidity !== "") ? report.lab_details.humidity + ' %' : "50 %" %>
+                                        <%= (report.lab_details && report.lab_details.humidity !==undefined &&
+                                            report.lab_details.humidity !=="" ) ? report.lab_details.humidity + ' %'
+                                            : "50 %" %>
                                     </span></p>
                                 <p><strong>Mains Voltage</strong><span class="val">
-                                        <%= (report.lab_details && report.lab_details.voltage !== undefined && report.lab_details.voltage !== "") ? report.lab_details.voltage + ' V' : "220 V" %>
+                                        <%= (report.lab_details && report.lab_details.voltage !==undefined &&
+                                            report.lab_details.voltage !=="" ) ? report.lab_details.voltage + ' V'
+                                            : "220 V" %>
                                     </span></p>
-                                <p><strong>Condition Status</strong><span class="val" style="color:var(--pass); font-weight:700;">
+                                <p><strong>Condition Status</strong><span class="val"
+                                        style="color:var(--pass); font-weight:700;">
                                         OIML Compliant
                                     </span></p>
                             </div>
@@ -800,7 +836,8 @@
                                             <th>MPE</th>
                                             <th>Status</th>
                                         </tr>
-                                        <% Object.values(report.form1_results).slice(0, 10).forEach(row=> { if(row.load_g !== undefined) { %>
+                                        <% Object.values(report.form1_results).slice(0, 10).forEach(row=> {
+                                            if(row.load_g !== undefined) { %>
                                             <tr>
                                                 <td>
                                                     <%= row.load_g %>
@@ -818,7 +855,8 @@
                                                 </td>
                                                 <td><span
                                                         class="status-tag <%= (row.asc_status === 'PASS' && row.desc_status === 'PASS') ? 'pass' : 'fail' %>">
-                                                        <%= (row.asc_status==='PASS' && row.desc_status==='PASS' ) ? 'PASS' : 'FAIL' %>
+                                                        <%= (row.asc_status==='PASS' && row.desc_status==='PASS' )
+                                                            ? 'PASS' : 'FAIL' %>
                                                     </span></td>
                                             </tr>
                                             <% }}) %>
@@ -866,7 +904,8 @@
                                                                 <th>Error</th>
                                                                 <th>Status</th>
                                                             </tr>
-                                                            <% Object.entries(report.form3_results.details).forEach(([pos, data])=> { %>
+                                                            <% Object.entries(report.form3_results.details).forEach(([pos,
+                                                                data])=> { %>
                                                                 <tr>
                                                                     <td style="text-transform:capitalize;">
                                                                         <%= pos %>
@@ -891,14 +930,16 @@
                                     <div class="table-row">
                                         <% if (report.form0_results && report.form0_results.items) { %>
                                             <div class="cert-table-wrapper">
-                                                <h4>Visual Inspection <span class="count-tag">(<%= Object.keys(report.form0_results.items).length %>
+                                                <h4>Visual Inspection <span class="count-tag">(<%=
+                                                            Object.keys(report.form0_results.items).length %>
                                                             items)</span></h4>
                                                 <table>
                                                     <tr>
                                                         <th>Item</th>
                                                         <th>Status</th>
                                                     </tr>
-                                                    <% Object.entries(report.form0_results.items).forEach(([key, val])=> { %>
+                                                    <% Object.entries(report.form0_results.items).forEach(([key, val])=>
+                                                        { %>
                                                         <tr>
                                                             <td style="text-transform:capitalize;">
                                                                 <%= key %>
@@ -929,9 +970,11 @@
                                                                         <%= test.name %>
                                                                     </td>
                                                                     <td>
-                                                                        <%= test.data.error ?? test.data.error_g ?? test.data.val ?? 'N/A' %>
+                                                                        <%= test.data.error ?? test.data.error_g ??
+                                                                            test.data.val ?? 'N/A' %>
                                                                     </td>
-                                                                    <td>&plusmn;<%= test.data.limit ?? test.data.limit_g ?? test.data.mpe ?? 'N/A' %>
+                                                                    <td>&plusmn;<%= test.data.limit ?? test.data.limit_g
+                                                                            ?? test.data.mpe ?? 'N/A' %>
                                                                     </td>
                                                                     <td><span
                                                                             class="status-tag <%= test.data[test.resKey] === 'PASS' ? 'pass' : 'fail' %>">
@@ -951,43 +994,52 @@
                                 <div>VALIDATED<br>NAWI<br>REPORT</div>
                             </div>
                             <div class="footer-note">
-                                This certificate is issued in accordance with <strong><%= report.rule_set_version || 'OIML R-76' %></strong> test procedures for
+                                This certificate is issued in accordance with <strong>
+                                    <%= report.rule_set_version || 'OIML R-76' %>
+                                </strong> test procedures for
                                 Non-Automatic Weighing Instruments. Results apply only to the instrument identified
                                 above at the time of testing.
                                 <% if (report.lab_details) { %>
-                                    <br><br><strong>Testing Facility:</strong> <%= report.lab_details.name || 'National Metrology Laboratory' %>, <%= report.lab_details.location || report.lab_details.state || 'India' %>
-                                    <br><strong>Environment:</strong> <%= report.lab_details.temperature || 20 %>°C &bull; <%= report.lab_details.humidity || 50 %>% RH &bull; <%= report.lab_details.voltage || 220 %>V
-                                <% } %>
+                                    <br><br><strong>Testing Facility:</strong>
+                                    <%= report.lab_details.name || 'National Metrology Laboratory' %>, <%=
+                                            report.lab_details.location || report.lab_details.state || 'India' %>
+                                            <br><strong>Environment:</strong>
+                                            <%= report.lab_details.temperature || 20 %>°C &bull; <%=
+                                                    report.lab_details.humidity || 50 %>% RH &bull; <%=
+                                                        report.lab_details.voltage || 220 %>V
+                                                        <% } %>
                             </div>
                             <div class="signature-block">
-                                <div class="signature-line"><%= report.createdBy || 'Authorized Signatory' %></div>
+                                <div class="signature-line">
+                                    <%= report.createdBy || 'Authorized Signatory' %>
+                                </div>
                                 <div class="designation">Metrology Test Officer</div>
                             </div>
                         </div>
             </div>
         </div>
-    <script>
-        (function() {
-            var qrImg = document.getElementById('cert-qr-img');
-            if (qrImg) {
-                qrImg.onerror = function() {
-                    var container = document.getElementById('qr-canvas-container');
-                    if (container && typeof QRCode !== 'undefined') {
-                        qrImg.style.display = 'none';
-                        container.innerHTML = '';
-                        new QRCode(container, {
-                            text: 'https://nawireported.onrender.com/certificate?id=<%= report._id %>',
-                            width: 58,
-                            height: 58,
-                            colorDark: '#083a44',
-                            colorLight: '#ffffff',
-                            correctLevel: QRCode.CorrectLevel.M
-                        });
-                    }
-                };
-            }
-        })();
-    </script>
+        <script>
+            (function () {
+                var qrImg = document.getElementById('cert-qr-img');
+                if (qrImg) {
+                    qrImg.onerror = function () {
+                        var container = document.getElementById('qr-canvas-container');
+                        if (container && typeof QRCode !== 'undefined') {
+                            qrImg.style.display = 'none';
+                            container.innerHTML = '';
+                            new QRCode(container, {
+                                text: 'https://nawireported.onrender.com/certificate?id=<%= report._id %>',
+                                width: 58,
+                                height: 58,
+                                colorDark: '#083a44',
+                                colorLight: '#ffffff',
+                                correctLevel: QRCode.CorrectLevel.M
+                            });
+                        }
+                    };
+                }
+            })();
+        </script>
 </body>
 
 </html>
